@@ -1,0 +1,2211 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSE423 Cloud Computing Project</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .gradient-bg { background: linear-gradient(135deg, #1e3a5f 0%, #0d1b2a 100%); }
+        .card-gradient { background: linear-gradient(145deg, #1e3a5f 0%, #152238 100%); }
+        .nav-active { background: rgba(59, 130, 246, 0.3); border-left: 3px solid #3b82f6; }
+        .task-done { text-decoration: line-through; opacity: 0.6; }
+        .code-block { background: #0d1117; border-radius: 8px; }
+        .copy-btn:hover { background: #3b82f6; }
+        .member-1 { border-color: #f59e0b; }
+        .member-2 { border-color: #10b981; }
+        .member-3 { border-color: #8b5cf6; }
+        .member-4 { border-color: #ec4899; }
+        .timeline-dot { width: 16px; height: 16px; }
+        .section { display: none; }
+        .section.active { display: block; }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #1e3a5f; }
+        ::-webkit-scrollbar-thumb { background: #3b82f6; border-radius: 4px; }
+        .pulse { animation: pulse 2s infinite; }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+    </style>
+</head>
+<body class="gradient-bg min-h-screen text-gray-100">
+    <!-- Header -->
+    <header class="fixed top-0 left-0 right-0 bg-gray-900/95 backdrop-blur-sm z-50 border-b border-gray-700">
+        <div class="container mx-auto px-4 py-3 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <i class="fas fa-cloud text-blue-400 text-2xl"></i>
+                <div>
+                    <h1 class="font-bold text-lg">CSE423 Cloud Computing</h1>
+                    <p class="text-xs text-gray-400">Word Count Analysis with Spark on AWS EMR</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-4">
+                <span class="text-sm bg-green-500/20 text-green-400 px-3 py-1 rounded-full">
+                    <i class="fas fa-calendar-alt mr-1"></i> 23-28 Aralık 2025
+                </span>
+                <span class="text-sm bg-yellow-500/20 text-yellow-400 px-3 py-1 rounded-full">
+                    <i class="fas fa-coins mr-1"></i> Budget: $50
+                </span>
+            </div>
+        </div>
+    </header>
+
+    <div class="flex pt-16">
+        <!-- Sidebar Navigation -->
+        <nav class="fixed left-0 top-16 bottom-0 w-64 bg-gray-900/50 border-r border-gray-700 overflow-y-auto">
+            <div class="p-4">
+                <div class="mb-6">
+                    <h3 class="text-xs uppercase text-gray-500 font-semibold mb-2">Genel</h3>
+                    <ul class="space-y-1">
+                        <li>
+                            <a href="#" onclick="showSection('overview')" class="nav-link flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-700/50 transition" data-section="overview">
+                                <i class="fas fa-home w-5"></i> Ana Sayfa
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" onclick="showSection('timeline')" class="nav-link flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-700/50 transition" data-section="timeline">
+                                <i class="fas fa-calendar w-5"></i> Zaman Çizelgesi
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" onclick="showSection('architecture')" class="nav-link flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-700/50 transition" data-section="architecture">
+                                <i class="fas fa-sitemap w-5"></i> Mimari
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="mb-6">
+                    <h3 class="text-xs uppercase text-gray-500 font-semibold mb-2">Görev Dağılımı</h3>
+                    <ul class="space-y-1">
+                        <li>
+                            <a href="#" onclick="showSection('member1')" class="nav-link flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-700/50 transition border-l-2 border-yellow-500" data-section="member1">
+                                <i class="fas fa-server w-5 text-yellow-500"></i> Member 1 - Infra
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" onclick="showSection('member2')" class="nav-link flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-700/50 transition border-l-2 border-green-500" data-section="member2">
+                                <i class="fas fa-database w-5 text-green-500"></i> Member 2 - Data
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" onclick="showSection('member3')" class="nav-link flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-700/50 transition border-l-2 border-purple-500" data-section="member3">
+                                <i class="fas fa-code w-5 text-purple-500"></i> Member 3 - Dev
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" onclick="showSection('member4')" class="nav-link flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-700/50 transition border-l-2 border-pink-500" data-section="member4">
+                                <i class="fas fa-check-circle w-5 text-pink-500"></i> Member 4 - Test
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="mb-6">
+                    <h3 class="text-xs uppercase text-gray-500 font-semibold mb-2">Kaynaklar</h3>
+                    <ul class="space-y-1">
+                        <li>
+                            <a href="#" onclick="showSection('codes')" class="nav-link flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-700/50 transition" data-section="codes">
+                                <i class="fas fa-file-code w-5"></i> Kodlar
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" onclick="showSection('report')" class="nav-link flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-700/50 transition" data-section="report">
+                                <i class="fas fa-file-alt w-5"></i> Rapor Şablonu
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" onclick="showSection('emergency')" class="nav-link flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-700/50 transition" data-section="emergency">
+                                <i class="fas fa-exclamation-triangle w-5"></i> Acil Durumlar
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" onclick="showSection('links')" class="nav-link flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-700/50 transition" data-section="links">
+                                <i class="fas fa-link w-5"></i> Faydalı Linkler
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="ml-64 flex-1 p-6">
+            
+            <!-- Overview Section -->
+            <section id="overview" class="section active">
+                <div class="max-w-5xl mx-auto">
+                    <h2 class="text-3xl font-bold mb-6 flex items-center gap-3">
+                        <i class="fas fa-rocket text-blue-400"></i> Proje Genel Bakış
+                    </h2>
+
+                    <!-- Project Info Cards -->
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+                        <div class="card-gradient rounded-xl p-4 border border-gray-700">
+                            <div class="text-3xl font-bold text-blue-400">10 GB</div>
+                            <div class="text-sm text-gray-400">Veri Boyutu</div>
+                        </div>
+                        <div class="card-gradient rounded-xl p-4 border border-gray-700">
+                            <div class="text-3xl font-bold text-green-400">4</div>
+                            <div class="text-sm text-gray-400">Ekip Üyesi</div>
+                        </div>
+                        <div class="card-gradient rounded-xl p-4 border border-gray-700">
+                            <div class="text-3xl font-bold text-yellow-400">6</div>
+                            <div class="text-sm text-gray-400">Gün</div>
+                        </div>
+                        <div class="card-gradient rounded-xl p-4 border border-gray-700">
+                            <div class="text-3xl font-bold text-purple-400">$50</div>
+                            <div class="text-sm text-gray-400">AWS Budget</div>
+                        </div>
+                    </div>
+
+                    <!-- Project Description -->
+                    <div class="card-gradient rounded-xl p-6 border border-gray-700 mb-8">
+                        <h3 class="text-xl font-semibold mb-4 flex items-center gap-2">
+                            <i class="fas fa-info-circle text-blue-400"></i> Proje Amacı
+                        </h3>
+                        <p class="text-gray-300 mb-4">
+                            10 GB'lık büyük bir metin dosyası üzerinde <strong>Apache Spark</strong> kullanarak 
+                            <strong>word count (kelime sayımı)</strong> analizi yapılacak. İş yükü, 
+                            <strong>AWS EMR</strong> cluster'ı üzerinde birden fazla node'a dağıtılarak 
+                            paralel işleme gerçekleştirilecek.
+                        </p>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="px-3 py-1 bg-blue-500/20 text-blue-300 rounded-full text-sm">Apache Spark</span>
+                            <span class="px-3 py-1 bg-orange-500/20 text-orange-300 rounded-full text-sm">AWS EMR</span>
+                            <span class="px-3 py-1 bg-green-500/20 text-green-300 rounded-full text-sm">S3</span>
+                            <span class="px-3 py-1 bg-purple-500/20 text-purple-300 rounded-full text-sm">MapReduce</span>
+                            <span class="px-3 py-1 bg-pink-500/20 text-pink-300 rounded-full text-sm">Python</span>
+                        </div>
+                    </div>
+
+                    <!-- Team Overview -->
+                    <h3 class="text-xl font-semibold mb-4 flex items-center gap-2">
+                        <i class="fas fa-users text-blue-400"></i> Ekip Görevleri
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+                        <div class="card-gradient rounded-xl p-5 border-l-4 border-yellow-500">
+                            <div class="flex items-center gap-3 mb-3">
+                                <div class="w-10 h-10 bg-yellow-500/20 rounded-full flex items-center justify-center">
+                                    <i class="fas fa-server text-yellow-500"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-semibold">Member 1</h4>
+                                    <p class="text-sm text-gray-400">Infrastructure Lead</p>
+                                </div>
+                            </div>
+                            <ul class="text-sm text-gray-300 space-y-1">
+                                <li><i class="fas fa-check text-yellow-500 mr-2"></i>S3 Bucket oluşturma</li>
+                                <li><i class="fas fa-check text-yellow-500 mr-2"></i>EMR Cluster kurulumu</li>
+                                <li><i class="fas fa-check text-yellow-500 mr-2"></i>Maliyet takibi</li>
+                            </ul>
+                        </div>
+
+                        <div class="card-gradient rounded-xl p-5 border-l-4 border-green-500">
+                            <div class="flex items-center gap-3 mb-3">
+                                <div class="w-10 h-10 bg-green-500/20 rounded-full flex items-center justify-center">
+                                    <i class="fas fa-database text-green-500"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-semibold">Member 2</h4>
+                                    <p class="text-sm text-gray-400">Data Engineer</p>
+                                </div>
+                            </div>
+                            <ul class="text-sm text-gray-300 space-y-1">
+                                <li><i class="fas fa-check text-green-500 mr-2"></i>10 GB veri üretimi</li>
+                                <li><i class="fas fa-check text-green-500 mr-2"></i>S3'e yükleme</li>
+                                <li><i class="fas fa-check text-green-500 mr-2"></i>Veri doğrulama</li>
+                            </ul>
+                        </div>
+
+                        <div class="card-gradient rounded-xl p-5 border-l-4 border-purple-500">
+                            <div class="flex items-center gap-3 mb-3">
+                                <div class="w-10 h-10 bg-purple-500/20 rounded-full flex items-center justify-center">
+                                    <i class="fas fa-code text-purple-500"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-semibold">Member 3</h4>
+                                    <p class="text-sm text-gray-400">Developer</p>
+                                </div>
+                            </div>
+                            <ul class="text-sm text-gray-300 space-y-1">
+                                <li><i class="fas fa-check text-purple-500 mr-2"></i>Spark kodu yazma</li>
+                                <li><i class="fas fa-check text-purple-500 mr-2"></i>EMR'de çalıştırma</li>
+                                <li><i class="fas fa-check text-purple-500 mr-2"></i>Spark UI monitoring</li>
+                            </ul>
+                        </div>
+
+                        <div class="card-gradient rounded-xl p-5 border-l-4 border-pink-500">
+                            <div class="flex items-center gap-3 mb-3">
+                                <div class="w-10 h-10 bg-pink-500/20 rounded-full flex items-center justify-center">
+                                    <i class="fas fa-check-circle text-pink-500"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-semibold">Member 4</h4>
+                                    <p class="text-sm text-gray-400">Testing & Monitoring</p>
+                                </div>
+                            </div>
+                            <ul class="text-sm text-gray-300 space-y-1">
+                                <li><i class="fas fa-check text-pink-500 mr-2"></i>Sonuç doğrulama</li>
+                                <li><i class="fas fa-check text-pink-500 mr-2"></i>Performance metrikleri</li>
+                                <li><i class="fas fa-check text-pink-500 mr-2"></i>Sorun giderme</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Deliverables -->
+                    <div class="card-gradient rounded-xl p-6 border border-gray-700">
+                        <h3 class="text-xl font-semibold mb-4 flex items-center gap-2">
+                            <i class="fas fa-clipboard-list text-blue-400"></i> Teslim Edilecekler
+                        </h3>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div class="bg-gray-800/50 rounded-lg p-4">
+                                <i class="fas fa-file-code text-2xl text-blue-400 mb-2"></i>
+                                <h4 class="font-semibold">Python Kodu</h4>
+                                <p class="text-sm text-gray-400">Spark word count uygulaması</p>
+                            </div>
+                            <div class="bg-gray-800/50 rounded-lg p-4">
+                                <i class="fas fa-images text-2xl text-green-400 mb-2"></i>
+                                <h4 class="font-semibold">Screenshot'lar</h4>
+                                <p class="text-sm text-gray-400">Her adımın ekran görüntüsü (~53 adet)</p>
+                            </div>
+                            <div class="bg-gray-800/50 rounded-lg p-4">
+                                <i class="fas fa-file-pdf text-2xl text-red-400 mb-2"></i>
+                                <h4 class="font-semibold">Logbook Raporu</h4>
+                                <p class="text-sm text-gray-400">Detaylı proje raporu</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Timeline Section -->
+            <section id="timeline" class="section">
+                <div class="max-w-5xl mx-auto">
+                    <h2 class="text-3xl font-bold mb-6 flex items-center gap-3">
+                        <i class="fas fa-calendar-alt text-blue-400"></i> Zaman Çizelgesi (23-28 Aralık)
+                    </h2>
+
+                    <div class="space-y-6">
+                        <!-- Day 1 -->
+                        <div class="card-gradient rounded-xl p-6 border border-gray-700">
+                            <div class="flex items-center gap-4 mb-4">
+                                <div class="w-16 h-16 bg-blue-500 rounded-xl flex flex-col items-center justify-center">
+                                    <span class="text-2xl font-bold">23</span>
+                                    <span class="text-xs">ARA</span>
+                                </div>
+                                <div>
+                                    <h3 class="text-xl font-semibold">Gün 1 - Başlangıç & Setup</h3>
+                                    <p class="text-gray-400">Meeting + Altyapı Hazırlığı</p>
+                                </div>
+                                <span class="ml-auto px-3 py-1 bg-blue-500/20 text-blue-300 rounded-full text-sm">Bugün</span>
+                            </div>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div class="bg-gray-800/50 rounded-lg p-4 border-l-4 border-yellow-500">
+                                    <div class="flex items-center gap-2 mb-2">
+                                        <span class="text-yellow-500 font-semibold">Member 1</span>
+                                        <span class="text-xs text-gray-500">Saat: 14:00-16:00</span>
+                                    </div>
+                                    <ul class="text-sm space-y-1">
+                                        <li><input type="checkbox" class="mr-2"> AWS Learner Lab'ı başlat</li>
+                                        <li><input type="checkbox" class="mr-2"> S3 Bucket oluştur</li>
+                                        <li><input type="checkbox" class="mr-2"> Bucket bilgisini Member 2'ye ilet</li>
+                                    </ul>
+                                </div>
+                                <div class="bg-gray-800/50 rounded-lg p-4 border-l-4 border-green-500">
+                                    <div class="flex items-center gap-2 mb-2">
+                                        <span class="text-green-500 font-semibold">Member 2</span>
+                                        <span class="text-xs text-gray-500">Saat: 14:00-18:00</span>
+                                    </div>
+                                    <ul class="text-sm space-y-1">
+                                        <li><input type="checkbox" class="mr-2"> Python ortamını hazırla</li>
+                                        <li><input type="checkbox" class="mr-2"> generate_data.py'yi çalıştır</li>
+                                        <li><input type="checkbox" class="mr-2"> 10 GB veri üretmeye başla</li>
+                                    </ul>
+                                </div>
+                                <div class="bg-gray-800/50 rounded-lg p-4 border-l-4 border-purple-500">
+                                    <div class="flex items-center gap-2 mb-2">
+                                        <span class="text-purple-500 font-semibold">Member 3</span>
+                                        <span class="text-xs text-gray-500">Saat: 14:00-16:00</span>
+                                    </div>
+                                    <ul class="text-sm space-y-1">
+                                        <li><input type="checkbox" class="mr-2"> wordcount.py kodunu incele</li>
+                                        <li><input type="checkbox" class="mr-2"> Kodu anla, notlar al</li>
+                                        <li><input type="checkbox" class="mr-2"> PuTTY kurulumunu yap</li>
+                                    </ul>
+                                </div>
+                                <div class="bg-gray-800/50 rounded-lg p-4 border-l-4 border-pink-500">
+                                    <div class="flex items-center gap-2 mb-2">
+                                        <span class="text-pink-500 font-semibold">Member 4</span>
+                                        <span class="text-xs text-gray-500">Saat: 14:00-16:00</span>
+                                    </div>
+                                    <ul class="text-sm space-y-1">
+                                        <li><input type="checkbox" class="mr-2"> AWS CloudWatch dokümantasyonunu oku</li>
+                                        <li><input type="checkbox" class="mr-2"> Metrik listesini hazırla</li>
+                                        <li><input type="checkbox" class="mr-2"> Screenshot klasörü oluştur</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Day 2 -->
+                        <div class="card-gradient rounded-xl p-6 border border-gray-700">
+                            <div class="flex items-center gap-4 mb-4">
+                                <div class="w-16 h-16 bg-gray-700 rounded-xl flex flex-col items-center justify-center">
+                                    <span class="text-2xl font-bold">24</span>
+                                    <span class="text-xs">ARA</span>
+                                </div>
+                                <div>
+                                    <h3 class="text-xl font-semibold">Gün 2 - Veri Hazırlığı</h3>
+                                    <p class="text-gray-400">Veri Üretimi Tamamlanıyor + S3 Upload Başlıyor</p>
+                                </div>
+                            </div>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div class="bg-gray-800/50 rounded-lg p-4 border-l-4 border-yellow-500">
+                                    <div class="flex items-center gap-2 mb-2">
+                                        <span class="text-yellow-500 font-semibold">Member 1</span>
+                                    </div>
+                                    <ul class="text-sm space-y-1">
+                                        <li><input type="checkbox" class="mr-2"> AWS CLI credentials ayarla</li>
+                                        <li><input type="checkbox" class="mr-2"> Member 2'den veriyi al</li>
+                                        <li><input type="checkbox" class="mr-2"> S3'e upload başlat</li>
+                                    </ul>
+                                </div>
+                                <div class="bg-gray-800/50 rounded-lg p-4 border-l-4 border-green-500">
+                                    <div class="flex items-center gap-2 mb-2">
+                                        <span class="text-green-500 font-semibold">Member 2</span>
+                                    </div>
+                                    <ul class="text-sm space-y-1">
+                                        <li><input type="checkbox" class="mr-2"> Veri üretimini tamamla</li>
+                                        <li><input type="checkbox" class="mr-2"> Dosya boyutunu doğrula (10GB+)</li>
+                                        <li><input type="checkbox" class="mr-2"> Member 1 ile S3 upload'a yardım et</li>
+                                    </ul>
+                                </div>
+                                <div class="bg-gray-800/50 rounded-lg p-4 border-l-4 border-purple-500">
+                                    <div class="flex items-center gap-2 mb-2">
+                                        <span class="text-purple-500 font-semibold">Member 3</span>
+                                    </div>
+                                    <ul class="text-sm space-y-1">
+                                        <li><input type="checkbox" class="mr-2"> Kodu S3'e yükle (scripts/)</li>
+                                        <li><input type="checkbox" class="mr-2"> S3 path'lerini güncelle</li>
+                                        <li><input type="checkbox" class="mr-2"> Spark dokümantasyonunu oku</li>
+                                    </ul>
+                                </div>
+                                <div class="bg-gray-800/50 rounded-lg p-4 border-l-4 border-pink-500">
+                                    <div class="flex items-center gap-2 mb-2">
+                                        <span class="text-pink-500 font-semibold">Member 4</span>
+                                    </div>
+                                    <ul class="text-sm space-y-1">
+                                        <li><input type="checkbox" class="mr-2"> S3 upload'ı izle</li>
+                                        <li><input type="checkbox" class="mr-2"> Screenshot al</li>
+                                        <li><input type="checkbox" class="mr-2"> Rapor taslağını başlat</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Day 3 -->
+                        <div class="card-gradient rounded-xl p-6 border border-gray-700">
+                            <div class="flex items-center gap-4 mb-4">
+                                <div class="w-16 h-16 bg-gray-700 rounded-xl flex flex-col items-center justify-center">
+                                    <span class="text-2xl font-bold">25</span>
+                                    <span class="text-xs">ARA</span>
+                                </div>
+                                <div>
+                                    <h3 class="text-xl font-semibold">Gün 3 - EMR Kurulumu</h3>
+                                    <p class="text-gray-400">Cluster Kurulumu + İlk Test</p>
+                                </div>
+                            </div>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div class="bg-gray-800/50 rounded-lg p-4 border-l-4 border-yellow-500">
+                                    <div class="flex items-center gap-2 mb-2">
+                                        <span class="text-yellow-500 font-semibold">Member 1</span>
+                                        <span class="px-2 py-0.5 bg-red-500/20 text-red-300 rounded text-xs">KRİTİK</span>
+                                    </div>
+                                    <ul class="text-sm space-y-1">
+                                        <li><input type="checkbox" class="mr-2"> EMR Cluster oluştur</li>
+                                        <li><input type="checkbox" class="mr-2"> "Waiting" durumunu bekle</li>
+                                        <li><input type="checkbox" class="mr-2"> Cluster bilgilerini paylaş</li>
+                                    </ul>
+                                </div>
+                                <div class="bg-gray-800/50 rounded-lg p-4 border-l-4 border-green-500">
+                                    <div class="flex items-center gap-2 mb-2">
+                                        <span class="text-green-500 font-semibold">Member 2</span>
+                                    </div>
+                                    <ul class="text-sm space-y-1">
+                                        <li><input type="checkbox" class="mr-2"> S3 verisi doğrulandı mı kontrol et</li>
+                                        <li><input type="checkbox" class="mr-2"> Backup plan hazırla (varsa sorun)</li>
+                                        <li><input type="checkbox" class="mr-2"> Screenshot'ları düzenle</li>
+                                    </ul>
+                                </div>
+                                <div class="bg-gray-800/50 rounded-lg p-4 border-l-4 border-purple-500">
+                                    <div class="flex items-center gap-2 mb-2">
+                                        <span class="text-purple-500 font-semibold">Member 3</span>
+                                        <span class="px-2 py-0.5 bg-red-500/20 text-red-300 rounded text-xs">KRİTİK</span>
+                                    </div>
+                                    <ul class="text-sm space-y-1">
+                                        <li><input type="checkbox" class="mr-2"> EMR'e SSH bağlantısı kur</li>
+                                        <li><input type="checkbox" class="mr-2"> Küçük test dosyasıyla dene</li>
+                                        <li><input type="checkbox" class="mr-2"> Sorunları çöz</li>
+                                    </ul>
+                                </div>
+                                <div class="bg-gray-800/50 rounded-lg p-4 border-l-4 border-pink-500">
+                                    <div class="flex items-center gap-2 mb-2">
+                                        <span class="text-pink-500 font-semibold">Member 4</span>
+                                    </div>
+                                    <ul class="text-sm space-y-1">
+                                        <li><input type="checkbox" class="mr-2"> Cluster metriklerini izle</li>
+                                        <li><input type="checkbox" class="mr-2"> Maliyet takibi yap</li>
+                                        <li><input type="checkbox" class="mr-2"> Screenshot al</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="mt-4 p-3 bg-red-500/10 border border-red-500/30 rounded-lg">
+                                <p class="text-red-300 text-sm">
+                                    <i class="fas fa-exclamation-triangle mr-2"></i>
+                                    <strong>UYARI:</strong> EMR Cluster saatte ~$0.60 yakıyor! Sadece aktif çalışma sırasında açık tutun.
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Day 4 -->
+                        <div class="card-gradient rounded-xl p-6 border border-gray-700">
+                            <div class="flex items-center gap-4 mb-4">
+                                <div class="w-16 h-16 bg-gray-700 rounded-xl flex flex-col items-center justify-center">
+                                    <span class="text-2xl font-bold">26</span>
+                                    <span class="text-xs">ARA</span>
+                                </div>
+                                <div>
+                                    <h3 class="text-xl font-semibold">Gün 4 - Ana Çalıştırma</h3>
+                                    <p class="text-gray-400">10GB Word Count Analizi</p>
+                                </div>
+                                <span class="ml-auto px-3 py-1 bg-green-500/20 text-green-300 rounded-full text-sm">Ana Gün</span>
+                            </div>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div class="bg-gray-800/50 rounded-lg p-4 border-l-4 border-yellow-500">
+                                    <div class="flex items-center gap-2 mb-2">
+                                        <span class="text-yellow-500 font-semibold">Member 1</span>
+                                    </div>
+                                    <ul class="text-sm space-y-1">
+                                        <li><input type="checkbox" class="mr-2"> Cluster'ı başlat</li>
+                                        <li><input type="checkbox" class="mr-2"> Maliyet takibi yap</li>
+                                        <li><input type="checkbox" class="mr-2"> İş bitince TERMINATE et!</li>
+                                    </ul>
+                                </div>
+                                <div class="bg-gray-800/50 rounded-lg p-4 border-l-4 border-green-500">
+                                    <div class="flex items-center gap-2 mb-2">
+                                        <span class="text-green-500 font-semibold">Member 2</span>
+                                    </div>
+                                    <ul class="text-sm space-y-1">
+                                        <li><input type="checkbox" class="mr-2"> Destek ol, izle</li>
+                                        <li><input type="checkbox" class="mr-2"> Veri bölümü için rapor yaz</li>
+                                        <li><input type="checkbox" class="mr-2"> Screenshot'ları düzenle</li>
+                                    </ul>
+                                </div>
+                                <div class="bg-gray-800/50 rounded-lg p-4 border-l-4 border-purple-500">
+                                    <div class="flex items-center gap-2 mb-2">
+                                        <span class="text-purple-500 font-semibold">Member 3</span>
+                                        <span class="px-2 py-0.5 bg-green-500/20 text-green-300 rounded text-xs">ANA GÖREV</span>
+                                    </div>
+                                    <ul class="text-sm space-y-1">
+                                        <li><input type="checkbox" class="mr-2"> spark-submit çalıştır</li>
+                                        <li><input type="checkbox" class="mr-2"> Spark UI screenshot'ları al</li>
+                                        <li><input type="checkbox" class="mr-2"> Sonuçları kaydet</li>
+                                    </ul>
+                                </div>
+                                <div class="bg-gray-800/50 rounded-lg p-4 border-l-4 border-pink-500">
+                                    <div class="flex items-center gap-2 mb-2">
+                                        <span class="text-pink-500 font-semibold">Member 4</span>
+                                        <span class="px-2 py-0.5 bg-green-500/20 text-green-300 rounded text-xs">ANA GÖREV</span>
+                                    </div>
+                                    <ul class="text-sm space-y-1">
+                                        <li><input type="checkbox" class="mr-2"> YARN, CloudWatch izle</li>
+                                        <li><input type="checkbox" class="mr-2"> Performance metrikleri topla</li>
+                                        <li><input type="checkbox" class="mr-2"> Sonuçları doğrula</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Day 5 -->
+                        <div class="card-gradient rounded-xl p-6 border border-gray-700">
+                            <div class="flex items-center gap-4 mb-4">
+                                <div class="w-16 h-16 bg-gray-700 rounded-xl flex flex-col items-center justify-center">
+                                    <span class="text-2xl font-bold">27</span>
+                                    <span class="text-xs">ARA</span>
+                                </div>
+                                <div>
+                                    <h3 class="text-xl font-semibold">Gün 5 - Doğrulama & Rapor</h3>
+                                    <p class="text-gray-400">Sonuç Kontrolü + Rapor Yazımı</p>
+                                </div>
+                            </div>
+                            
+                            <div class="bg-gray-800/50 rounded-lg p-4">
+                                <p class="text-center text-gray-300 mb-4">
+                                    <i class="fas fa-users mr-2"></i>
+                                    <strong>TÜM EKİP:</strong> Rapor yazımına katkı sağla
+                                </p>
+                                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                                    <div class="text-center p-3 bg-gray-700/50 rounded-lg">
+                                        <span class="text-yellow-500 block mb-1">M1</span>
+                                        <span class="text-xs text-gray-400">Altyapı bölümü</span>
+                                    </div>
+                                    <div class="text-center p-3 bg-gray-700/50 rounded-lg">
+                                        <span class="text-green-500 block mb-1">M2</span>
+                                        <span class="text-xs text-gray-400">Veri bölümü</span>
+                                    </div>
+                                    <div class="text-center p-3 bg-gray-700/50 rounded-lg">
+                                        <span class="text-purple-500 block mb-1">M3</span>
+                                        <span class="text-xs text-gray-400">Kod bölümü</span>
+                                    </div>
+                                    <div class="text-center p-3 bg-gray-700/50 rounded-lg">
+                                        <span class="text-pink-500 block mb-1">M4</span>
+                                        <span class="text-xs text-gray-400">Metrik bölümü</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Day 6 -->
+                        <div class="card-gradient rounded-xl p-6 border border-gray-700">
+                            <div class="flex items-center gap-4 mb-4">
+                                <div class="w-16 h-16 bg-green-600 rounded-xl flex flex-col items-center justify-center">
+                                    <span class="text-2xl font-bold">28</span>
+                                    <span class="text-xs">ARA</span>
+                                </div>
+                                <div>
+                                    <h3 class="text-xl font-semibold">Gün 6 - Final & Sunum Hazırlığı</h3>
+                                    <p class="text-gray-400">Son Kontrol + Sunum Provası</p>
+                                </div>
+                                <span class="ml-auto px-3 py-1 bg-green-500/20 text-green-300 rounded-full text-sm">Son Gün</span>
+                            </div>
+                            
+                            <div class="bg-gray-800/50 rounded-lg p-4">
+                                <ul class="space-y-2">
+                                    <li class="flex items-center gap-2">
+                                        <input type="checkbox" class="mr-2">
+                                        <span>Rapor son kontrolü ve birleştirme</span>
+                                    </li>
+                                    <li class="flex items-center gap-2">
+                                        <input type="checkbox" class="mr-2">
+                                        <span>Tüm screenshot'ların rapora eklenmesi</span>
+                                    </li>
+                                    <li class="flex items-center gap-2">
+                                        <input type="checkbox" class="mr-2">
+                                        <span>Sunum slaytları hazırlama</span>
+                                    </li>
+                                    <li class="flex items-center gap-2">
+                                        <input type="checkbox" class="mr-2">
+                                        <span>Q&A hazırlığı - sorulara cevap pratiği</span>
+                                    </li>
+                                    <li class="flex items-center gap-2">
+                                        <input type="checkbox" class="mr-2">
+                                        <span>Demo senaryosunu belirle</span>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Architecture Section -->
+            <section id="architecture" class="section">
+                <div class="max-w-5xl mx-auto">
+                    <h2 class="text-3xl font-bold mb-6 flex items-center gap-3">
+                        <i class="fas fa-sitemap text-blue-400"></i> Sistem Mimarisi
+                    </h2>
+
+                    <div class="card-gradient rounded-xl p-6 border border-gray-700 mb-6">
+                        <h3 class="text-xl font-semibold mb-4">Proje Akış Diyagramı</h3>
+                        <div class="bg-gray-900 rounded-lg p-6 font-mono text-sm overflow-x-auto">
+<pre class="text-gray-300">
+┌─────────────────────────────────────────────────────────────────────────┐
+│                         PROJE MİMARİSİ                                  │
+└─────────────────────────────────────────────────────────────────────────┘
+
+  ┌──────────────┐         ┌──────────────┐         ┌──────────────┐
+  │   MEMBER 2   │         │   MEMBER 1   │         │   MEMBER 3   │
+  │  Data Eng.   │         │    Infra     │         │  Developer   │
+  └──────┬───────┘         └──────┬───────┘         └──────┬───────┘
+         │                        │                        │
+         ▼                        ▼                        ▼
+  ┌──────────────┐         ┌──────────────┐         ┌──────────────┐
+  │  10GB Veri   │         │  S3 Bucket   │         │ Spark Kodu   │
+  │   Üretimi    │         │   Oluştur    │         │   Hazırla    │
+  └──────┬───────┘         └──────┬───────┘         └──────┬───────┘
+         │                        │                        │
+         └────────────┬───────────┘                        │
+                      ▼                                    │
+               ┌──────────────┐                            │
+               │   S3'e       │                            │
+               │   Upload     │◄───────────────────────────┘
+               └──────┬───────┘
+                      │
+                      ▼
+         ┌────────────────────────┐
+         │      AWS S3 BUCKET     │
+         │  ┌──────────────────┐  │
+         │  │ input/           │  │
+         │  │  └─ data.txt     │  │
+         │  │ scripts/         │  │
+         │  │  └─ wordcount.py │  │
+         │  │ output/          │  │
+         │  │  └─ (sonuçlar)   │  │
+         │  └──────────────────┘  │
+         └───────────┬────────────┘
+                     │
+                     ▼
+         ┌────────────────────────┐
+         │     AWS EMR CLUSTER    │
+         │  ┌──────────────────┐  │
+         │  │   Master Node    │  │
+         │  │   (Spark Driver) │  │
+         │  └────────┬─────────┘  │
+         │           │            │
+         │  ┌────────┴─────────┐  │
+         │  │                  │  │
+         │  ▼                  ▼  │
+         │ ┌────────┐  ┌────────┐ │
+         │ │ Core   │  │ Core   │ │
+         │ │ Node 1 │  │ Node 2 │ │
+         │ │(Worker)│  │(Worker)│ │
+         │ └────────┘  └────────┘ │
+         └───────────┬────────────┘
+                     │
+                     ▼
+         ┌────────────────────────┐
+         │       SONUÇLAR         │
+         │  - Top 100 kelime      │
+         │  - Toplam kelime sayısı│
+         │  - Execution time      │
+         │  - Performance metrics │
+         └───────────┬────────────┘
+                     │
+                     ▼
+               ┌──────────────┐
+               │   MEMBER 4   │
+               │    Test &    │
+               │   Validate   │
+               └──────────────┘
+</pre>
+                        </div>
+                    </div>
+
+                    <div class="card-gradient rounded-xl p-6 border border-gray-700 mb-6">
+                        <h3 class="text-xl font-semibold mb-4">Bağımlılık Matrisi</h3>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-sm">
+                                <thead>
+                                    <tr class="border-b border-gray-600">
+                                        <th class="text-left p-3">Görev</th>
+                                        <th class="text-left p-3">Sorumlu</th>
+                                        <th class="text-left p-3">Bekliyor</th>
+                                        <th class="text-left p-3">Blokluyor</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="border-b border-gray-700">
+                                        <td class="p-3">S3 Bucket Oluştur</td>
+                                        <td class="p-3"><span class="text-yellow-500">M1</span></td>
+                                        <td class="p-3 text-gray-500">-</td>
+                                        <td class="p-3">S3 Upload, Kod Upload</td>
+                                    </tr>
+                                    <tr class="border-b border-gray-700">
+                                        <td class="p-3">10GB Veri Üret</td>
+                                        <td class="p-3"><span class="text-green-500">M2</span></td>
+                                        <td class="p-3 text-gray-500">-</td>
+                                        <td class="p-3">S3 Upload</td>
+                                    </tr>
+                                    <tr class="border-b border-gray-700">
+                                        <td class="p-3">S3'e Upload</td>
+                                        <td class="p-3"><span class="text-yellow-500">M1</span>+<span class="text-green-500">M2</span></td>
+                                        <td class="p-3">Bucket + Veri</td>
+                                        <td class="p-3">Spark Job</td>
+                                    </tr>
+                                    <tr class="border-b border-gray-700">
+                                        <td class="p-3">EMR Cluster Kur</td>
+                                        <td class="p-3"><span class="text-yellow-500">M1</span></td>
+                                        <td class="p-3">S3 Upload</td>
+                                        <td class="p-3">Spark Job</td>
+                                    </tr>
+                                    <tr class="border-b border-gray-700">
+                                        <td class="p-3">Spark Job Çalıştır</td>
+                                        <td class="p-3"><span class="text-purple-500">M3</span></td>
+                                        <td class="p-3">EMR Cluster</td>
+                                        <td class="p-3">Sonuç Doğrulama</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="p-3">Sonuç Doğrula</td>
+                                        <td class="p-3"><span class="text-pink-500">M4</span></td>
+                                        <td class="p-3">Spark Job</td>
+                                        <td class="p-3">Cluster Terminate</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="card-gradient rounded-xl p-6 border border-gray-700">
+                        <h3 class="text-xl font-semibold mb-4">AWS Servisleri</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div class="bg-gray-800/50 rounded-lg p-4">
+                                <div class="flex items-center gap-3 mb-3">
+                                    <div class="w-12 h-12 bg-green-500/20 rounded-lg flex items-center justify-center">
+                                        <i class="fas fa-hdd text-green-500 text-xl"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-semibold">Amazon S3</h4>
+                                        <p class="text-xs text-gray-400">Simple Storage Service</p>
+                                    </div>
+                                </div>
+                                <p class="text-sm text-gray-300">Veri ve kod depolama. Input ve output dosyaları burada tutulur.</p>
+                            </div>
+                            <div class="bg-gray-800/50 rounded-lg p-4">
+                                <div class="flex items-center gap-3 mb-3">
+                                    <div class="w-12 h-12 bg-orange-500/20 rounded-lg flex items-center justify-center">
+                                        <i class="fas fa-server text-orange-500 text-xl"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-semibold">Amazon EMR</h4>
+                                        <p class="text-xs text-gray-400">Elastic MapReduce</p>
+                                    </div>
+                                </div>
+                                <p class="text-sm text-gray-300">Spark cluster yönetimi. Master + Worker node'lar burada çalışır.</p>
+                            </div>
+                            <div class="bg-gray-800/50 rounded-lg p-4">
+                                <div class="flex items-center gap-3 mb-3">
+                                    <div class="w-12 h-12 bg-blue-500/20 rounded-lg flex items-center justify-center">
+                                        <i class="fas fa-chart-line text-blue-500 text-xl"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-semibold">CloudWatch</h4>
+                                        <p class="text-xs text-gray-400">Monitoring</p>
+                                    </div>
+                                </div>
+                                <p class="text-sm text-gray-300">CPU, Memory ve diğer metriklerin izlenmesi.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Member 1 Section -->
+            <section id="member1" class="section">
+                <div class="max-w-5xl mx-auto">
+                    <div class="flex items-center gap-4 mb-6">
+                        <div class="w-16 h-16 bg-yellow-500/20 rounded-xl flex items-center justify-center">
+                            <i class="fas fa-server text-yellow-500 text-2xl"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-3xl font-bold">Member 1 - Infrastructure Lead</h2>
+                            <p class="text-gray-400">S3 Bucket + EMR Cluster + Maliyet Yönetimi</p>
+                        </div>
+                    </div>
+
+                    <!-- Task 1.1 -->
+                    <div class="card-gradient rounded-xl p-6 border border-yellow-500/30 mb-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-xl font-semibold flex items-center gap-2">
+                                <span class="w-8 h-8 bg-yellow-500 rounded-full flex items-center justify-center text-sm font-bold text-gray-900">1</span>
+                                S3 Bucket Oluşturma
+                            </h3>
+                            <span class="text-sm bg-blue-500/20 text-blue-300 px-3 py-1 rounded-full">23 Aralık</span>
+                        </div>
+
+                        <div class="space-y-4">
+                            <div class="bg-gray-800/50 rounded-lg p-4">
+                                <h4 class="font-semibold mb-3 text-yellow-400">📋 Adım Adım:</h4>
+                                <ol class="space-y-3">
+                                    <li class="flex gap-3">
+                                        <span class="w-6 h-6 bg-yellow-500/20 rounded-full flex items-center justify-center text-xs">1</span>
+                                        <div>
+                                            <p>AWS Learner Lab'ı başlat (<strong>Start Lab</strong> butonu)</p>
+                                            <p class="text-sm text-gray-400">Yeşil olana kadar bekle (1-2 dk)</p>
+                                        </div>
+                                    </li>
+                                    <li class="flex gap-3">
+                                        <span class="w-6 h-6 bg-yellow-500/20 rounded-full flex items-center justify-center text-xs">2</span>
+                                        <div>
+                                            <p><strong>AWS</strong> yazısına tıkla → Console açılır</p>
+                                        </div>
+                                    </li>
+                                    <li class="flex gap-3">
+                                        <span class="w-6 h-6 bg-yellow-500/20 rounded-full flex items-center justify-center text-xs">3</span>
+                                        <div>
+                                            <p>Arama çubuğuna <code class="bg-gray-700 px-2 py-0.5 rounded">S3</code> yaz, tıkla</p>
+                                        </div>
+                                    </li>
+                                    <li class="flex gap-3">
+                                        <span class="w-6 h-6 bg-yellow-500/20 rounded-full flex items-center justify-center text-xs">4</span>
+                                        <div>
+                                            <p><strong>Create bucket</strong> butonuna tıkla</p>
+                                        </div>
+                                    </li>
+                                    <li class="flex gap-3">
+                                        <span class="w-6 h-6 bg-yellow-500/20 rounded-full flex items-center justify-center text-xs">5</span>
+                                        <div>
+                                            <p>Ayarları gir:</p>
+                                            <div class="mt-2 bg-gray-900 rounded p-3 text-sm">
+                                                <p><strong>Bucket name:</strong> <code>cse423-wordcount-[ogrenci-no]</code></p>
+                                                <p><strong>Region:</strong> <code>us-east-1</code> (değiştirme!)</p>
+                                                <p><strong>Diğer:</strong> Default bırak</p>
+                                            </div>
+                                        </div>
+                                    </li>
+                                    <li class="flex gap-3">
+                                        <span class="w-6 h-6 bg-yellow-500/20 rounded-full flex items-center justify-center text-xs">6</span>
+                                        <div>
+                                            <p><strong>Create bucket</strong> tıkla</p>
+                                        </div>
+                                    </li>
+                                </ol>
+                            </div>
+
+                            <div class="bg-gray-800/50 rounded-lg p-4">
+                                <h4 class="font-semibold mb-3 text-green-400">📸 Alınacak Screenshot'lar:</h4>
+                                <ul class="space-y-2 text-sm">
+                                    <li><input type="checkbox" class="mr-2"> SS1.1: S3 ana sayfası (bucket oluşturmadan önce)</li>
+                                    <li><input type="checkbox" class="mr-2"> SS1.2: Create bucket formu (doldurulmuş)</li>
+                                    <li><input type="checkbox" class="mr-2"> SS1.3: Bucket oluştu mesajı</li>
+                                    <li><input type="checkbox" class="mr-2"> SS1.4: Bucket listesinde görünüyor</li>
+                                </ul>
+                            </div>
+
+                            <div class="bg-green-500/10 border border-green-500/30 rounded-lg p-4">
+                                <h4 class="font-semibold mb-2 text-green-400">📤 Member 2'ye Gönder:</h4>
+                                <div class="bg-gray-900 rounded p-3 text-sm font-mono">
+                                    <p>✅ S3 Bucket hazır!</p>
+                                    <p class="mt-2">Bucket adı: cse423-wordcount-[ogrenci-no]</p>
+                                    <p>Region: us-east-1</p>
+                                    <p class="mt-2">Upload path: s3://cse423-wordcount-[ogrenci-no]/input/</p>
+                                    <p class="mt-2">Veri hazır olunca haber ver!</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Task 1.2 -->
+                    <div class="card-gradient rounded-xl p-6 border border-yellow-500/30 mb-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-xl font-semibold flex items-center gap-2">
+                                <span class="w-8 h-8 bg-yellow-500 rounded-full flex items-center justify-center text-sm font-bold text-gray-900">2</span>
+                                S3'e Veri Yükleme
+                            </h3>
+                            <span class="text-sm bg-blue-500/20 text-blue-300 px-3 py-1 rounded-full">24 Aralık</span>
+                        </div>
+
+                        <div class="bg-red-500/10 border border-red-500/30 rounded-lg p-4 mb-4">
+                            <p class="text-red-300 text-sm">
+                                <i class="fas fa-clock mr-2"></i>
+                                <strong>BAĞIMLILIK:</strong> Member 2'nin 10GB veriyi hazırlamasını bekle!
+                            </p>
+                        </div>
+
+                        <div class="space-y-4">
+                            <div class="bg-gray-800/50 rounded-lg p-4">
+                                <h4 class="font-semibold mb-3 text-yellow-400">📋 AWS CLI Kurulumu:</h4>
+                                <ol class="space-y-3 text-sm">
+                                    <li class="flex gap-3">
+                                        <span class="w-6 h-6 bg-yellow-500/20 rounded-full flex items-center justify-center text-xs">1</span>
+                                        <div>
+                                            <p>AWS CLI indir: <a href="https://aws.amazon.com/cli/" target="_blank" class="text-blue-400 hover:underline">https://aws.amazon.com/cli/</a></p>
+                                        </div>
+                                    </li>
+                                    <li class="flex gap-3">
+                                        <span class="w-6 h-6 bg-yellow-500/20 rounded-full flex items-center justify-center text-xs">2</span>
+                                        <div>
+                                            <p>Learner Lab'da <strong>AWS Details</strong> > <strong>AWS CLI</strong> > <strong>Show</strong> tıkla</p>
+                                        </div>
+                                    </li>
+                                    <li class="flex gap-3">
+                                        <span class="w-6 h-6 bg-yellow-500/20 rounded-full flex items-center justify-center text-xs">3</span>
+                                        <div>
+                                            <p>Credentials'ı kopyala</p>
+                                        </div>
+                                    </li>
+                                    <li class="flex gap-3">
+                                        <span class="w-6 h-6 bg-yellow-500/20 rounded-full flex items-center justify-center text-xs">4</span>
+                                        <div>
+                                            <p>Dosya oluştur: <code class="bg-gray-700 px-2 py-0.5 rounded">C:\Users\[kullanici]\.aws\credentials</code></p>
+                                        </div>
+                                    </li>
+                                </ol>
+                            </div>
+
+                            <div class="bg-gray-800/50 rounded-lg p-4">
+                                <h4 class="font-semibold mb-3 text-yellow-400">📋 Yükleme Komutu:</h4>
+                                <div class="code-block p-4 relative">
+                                    <button onclick="copyCode(this)" class="copy-btn absolute top-2 right-2 px-2 py-1 bg-gray-700 rounded text-xs hover:bg-blue-500">
+                                        <i class="fas fa-copy"></i> Kopyala
+                                    </button>
+                                    <pre class="text-green-400 text-sm">aws s3 cp large_text_data.txt s3://cse423-wordcount-[ogrenci-no]/input/ --region us-east-1</pre>
+                                </div>
+                                <p class="text-sm text-gray-400 mt-2">⏱️ Tahmini süre: 1-2 saat (internet hızına bağlı)</p>
+                            </div>
+
+                            <div class="bg-gray-800/50 rounded-lg p-4">
+                                <h4 class="font-semibold mb-3 text-green-400">📸 Alınacak Screenshot'lar:</h4>
+                                <ul class="space-y-2 text-sm">
+                                    <li><input type="checkbox" class="mr-2"> SS1.5: AWS CLI yükleme komutu çalışırken</li>
+                                    <li><input type="checkbox" class="mr-2"> SS1.6: Yükleme tamamlandı mesajı</li>
+                                    <li><input type="checkbox" class="mr-2"> SS1.7: S3'de input/ klasörü görünüyor</li>
+                                    <li><input type="checkbox" class="mr-2"> SS1.8: Dosya boyutu detayları</li>
+                                </ul>
+                            </div>
+
+                            <div class="bg-green-500/10 border border-green-500/30 rounded-lg p-4">
+                                <h4 class="font-semibold mb-2 text-green-400">📤 Member 3'e Gönder:</h4>
+                                <div class="bg-gray-900 rounded p-3 text-sm font-mono">
+                                    <p>✅ Veri S3'e yüklendi!</p>
+                                    <p class="mt-2">Input path:</p>
+                                    <p>s3://cse423-wordcount-[ogrenci-no]/input/large_text_data.txt</p>
+                                    <p class="mt-2">Output path:</p>
+                                    <p>s3://cse423-wordcount-[ogrenci-no]/output/</p>
+                                    <p class="mt-2">Dosya boyutu: 10.XX GB</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Task 1.3 -->
+                    <div class="card-gradient rounded-xl p-6 border border-yellow-500/30 mb-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-xl font-semibold flex items-center gap-2">
+                                <span class="w-8 h-8 bg-yellow-500 rounded-full flex items-center justify-center text-sm font-bold text-gray-900">3</span>
+                                EMR Cluster Kurulumu
+                            </h3>
+                            <span class="text-sm bg-red-500/20 text-red-300 px-3 py-1 rounded-full">25-26 Aralık • KRİTİK</span>
+                        </div>
+
+                        <div class="bg-red-500/10 border border-red-500/30 rounded-lg p-4 mb-4">
+                            <p class="text-red-300">
+                                <i class="fas fa-exclamation-triangle mr-2"></i>
+                                <strong>BÜTÇE UYARISI:</strong> EMR Cluster saatte ~$0.60 yakıyor! Sadece gerektiğinde açık tut!
+                            </p>
+                        </div>
+
+                        <div class="space-y-4">
+                            <div class="bg-gray-800/50 rounded-lg p-4">
+                                <h4 class="font-semibold mb-3 text-yellow-400">📋 Adım Adım:</h4>
+                                <ol class="space-y-3 text-sm">
+                                    <li class="flex gap-3">
+                                        <span class="w-6 h-6 bg-yellow-500/20 rounded-full flex items-center justify-center text-xs">1</span>
+                                        <div><p>AWS Console > Arama: <code class="bg-gray-700 px-2 py-0.5 rounded">EMR</code></p></div>
+                                    </li>
+                                    <li class="flex gap-3">
+                                        <span class="w-6 h-6 bg-yellow-500/20 rounded-full flex items-center justify-center text-xs">2</span>
+                                        <div><p><strong>Create cluster</strong> tıkla</p></div>
+                                    </li>
+                                    <li class="flex gap-3">
+                                        <span class="w-6 h-6 bg-yellow-500/20 rounded-full flex items-center justify-center text-xs">3</span>
+                                        <div>
+                                            <p>Ayarlar:</p>
+                                            <div class="mt-2 bg-gray-900 rounded p-3">
+                                                <p><strong>Name:</strong> WordCount-Cluster</p>
+                                                <p><strong>Release:</strong> emr-6.15.0 (veya en son)</p>
+                                                <p><strong>Applications:</strong> Spark ✅ (sadece Spark seç)</p>
+                                                <p><strong>Instance type:</strong> m5.xlarge</p>
+                                                <p><strong>Instances:</strong> 3 (1 master + 2 core)</p>
+                                                <p><strong>Key pair:</strong> Seç veya oluştur (MUTLAKA indir!)</p>
+                                            </div>
+                                        </div>
+                                    </li>
+                                    <li class="flex gap-3">
+                                        <span class="w-6 h-6 bg-yellow-500/20 rounded-full flex items-center justify-center text-xs">4</span>
+                                        <div><p><strong>Create cluster</strong> tıkla</p></div>
+                                    </li>
+                                    <li class="flex gap-3">
+                                        <span class="w-6 h-6 bg-yellow-500/20 rounded-full flex items-center justify-center text-xs">5</span>
+                                        <div><p>Status <span class="text-green-400">"Waiting"</span> olana kadar bekle (5-10 dk)</p></div>
+                                    </li>
+                                </ol>
+                            </div>
+
+                            <div class="bg-gray-800/50 rounded-lg p-4">
+                                <h4 class="font-semibold mb-3 text-green-400">📸 Alınacak Screenshot'lar:</h4>
+                                <ul class="space-y-2 text-sm">
+                                    <li><input type="checkbox" class="mr-2"> SS1.9: EMR Create cluster sayfası</li>
+                                    <li><input type="checkbox" class="mr-2"> SS1.10: Software configuration</li>
+                                    <li><input type="checkbox" class="mr-2"> SS1.11: Hardware configuration</li>
+                                    <li><input type="checkbox" class="mr-2"> SS1.12: Cluster "Starting" status</li>
+                                    <li><input type="checkbox" class="mr-2"> SS1.13: Cluster "Waiting" status</li>
+                                    <li><input type="checkbox" class="mr-2"> SS1.14: Cluster summary</li>
+                                </ul>
+                            </div>
+
+                            <div class="bg-green-500/10 border border-green-500/30 rounded-lg p-4">
+                                <h4 class="font-semibold mb-2 text-green-400">📤 Member 3 ve 4'e Gönder:</h4>
+                                <div class="bg-gray-900 rounded p-3 text-sm font-mono">
+                                    <p>✅ EMR Cluster hazır!</p>
+                                    <p class="mt-2">Cluster ID: j-XXXXXXXXXXXXX</p>
+                                    <p>Master DNS: ec2-XX-XX-XX-XX.compute-1.amazonaws.com</p>
+                                    <p>Status: Waiting</p>
+                                    <p class="mt-2">Spark job çalıştırmaya hazırız!</p>
+                                    <p class="mt-2 text-yellow-400">⏰ Cluster saatte $0.60 yakıyor!</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Task 1.4 -->
+                    <div class="card-gradient rounded-xl p-6 border border-yellow-500/30">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-xl font-semibold flex items-center gap-2">
+                                <span class="w-8 h-8 bg-yellow-500 rounded-full flex items-center justify-center text-sm font-bold text-gray-900">4</span>
+                                Cluster Terminate (SON ADIM)
+                            </h3>
+                            <span class="text-sm bg-green-500/20 text-green-300 px-3 py-1 rounded-full">26 Aralık • İş Bitince</span>
+                        </div>
+
+                        <div class="bg-red-500/10 border border-red-500/30 rounded-lg p-4 mb-4">
+                            <p class="text-red-300">
+                                <i class="fas fa-exclamation-triangle mr-2"></i>
+                                <strong>BAĞIMLILIK:</strong> Member 4'ün "sonuçlar tamam" onayını bekle!
+                            </p>
+                        </div>
+
+                        <div class="bg-gray-800/50 rounded-lg p-4">
+                            <h4 class="font-semibold mb-3 text-yellow-400">📋 Adımlar:</h4>
+                            <ol class="space-y-2 text-sm">
+                                <li>1. EMR Console > Clusters</li>
+                                <li>2. Cluster'ı seç</li>
+                                <li>3. <strong>Terminate</strong> tıkla</li>
+                                <li>4. Onay ver</li>
+                            </ol>
+                        </div>
+
+                        <div class="bg-gray-800/50 rounded-lg p-4 mt-4">
+                            <h4 class="font-semibold mb-3 text-green-400">📸 Alınacak Screenshot'lar:</h4>
+                            <ul class="space-y-2 text-sm">
+                                <li><input type="checkbox" class="mr-2"> SS1.15: Terminate öncesi durum</li>
+                                <li><input type="checkbox" class="mr-2"> SS1.16: Terminate onay</li>
+                                <li><input type="checkbox" class="mr-2"> SS1.17: "Terminating" status</li>
+                                <li><input type="checkbox" class="mr-2"> SS1.18: Toplam harcama (Learner Lab)</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Member 2 Section -->
+            <section id="member2" class="section">
+                <div class="max-w-5xl mx-auto">
+                    <div class="flex items-center gap-4 mb-6">
+                        <div class="w-16 h-16 bg-green-500/20 rounded-xl flex items-center justify-center">
+                            <i class="fas fa-database text-green-500 text-2xl"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-3xl font-bold">Member 2 - Data Engineer</h2>
+                            <p class="text-gray-400">10GB Veri Üretimi + S3 Upload Yardımı</p>
+                        </div>
+                    </div>
+
+                    <!-- Task 2.1 -->
+                    <div class="card-gradient rounded-xl p-6 border border-green-500/30 mb-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-xl font-semibold flex items-center gap-2">
+                                <span class="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center text-sm font-bold text-gray-900">1</span>
+                                Ortam Hazırlığı
+                            </h3>
+                            <span class="text-sm bg-blue-500/20 text-blue-300 px-3 py-1 rounded-full">23 Aralık</span>
+                        </div>
+
+                        <div class="space-y-4">
+                            <div class="bg-gray-800/50 rounded-lg p-4">
+                                <h4 class="font-semibold mb-3 text-green-400">📋 Kontroller:</h4>
+                                <div class="code-block p-4 mb-3">
+                                    <pre class="text-green-400 text-sm"># Python versiyonunu kontrol et
+python --version
+# veya
+python3 --version
+
+# En az Python 3.7 olmalı</pre>
+                                </div>
+                            </div>
+
+                            <div class="bg-yellow-500/10 border border-yellow-500/30 rounded-lg p-4">
+                                <p class="text-yellow-300">
+                                    <i class="fas fa-hdd mr-2"></i>
+                                    <strong>DISK ALANI:</strong> En az 15GB boş alan gerekli!
+                                </p>
+                                <p class="text-sm text-gray-400 mt-2">Windows: Dosya Gezgini > Bu Bilgisayar > C: boş alan</p>
+                            </div>
+
+                            <div class="bg-gray-800/50 rounded-lg p-4">
+                                <h4 class="font-semibold mb-3 text-green-400">📸 Screenshot:</h4>
+                                <ul class="text-sm">
+                                    <li><input type="checkbox" class="mr-2"> SS2.1: Python version kontrolü</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Task 2.2 -->
+                    <div class="card-gradient rounded-xl p-6 border border-green-500/30 mb-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-xl font-semibold flex items-center gap-2">
+                                <span class="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center text-sm font-bold text-gray-900">2</span>
+                                Test Verisi Üretimi (100MB)
+                            </h3>
+                            <span class="text-sm bg-blue-500/20 text-blue-300 px-3 py-1 rounded-full">23 Aralık</span>
+                        </div>
+
+                        <div class="bg-gray-800/50 rounded-lg p-4">
+                            <h4 class="font-semibold mb-3 text-green-400">📋 Komutlar:</h4>
+                            <div class="code-block p-4 relative mb-3">
+                                <button onclick="copyCode(this)" class="copy-btn absolute top-2 right-2 px-2 py-1 bg-gray-700 rounded text-xs">
+                                    <i class="fas fa-copy"></i> Kopyala
+                                </button>
+                                <pre class="text-green-400 text-sm"># Önce 100MB test dosyası üret
+python generate_data.py --test
+
+# Dosya boyutunu kontrol et
+dir test_data.txt       # Windows
+ls -lh test_data.txt    # Linux/Mac</pre>
+                            </div>
+                            <p class="text-sm text-gray-400">⏱️ Tahmini süre: 1-2 dakika</p>
+                        </div>
+
+                        <div class="bg-gray-800/50 rounded-lg p-4 mt-4">
+                            <h4 class="font-semibold mb-3 text-green-400">📸 Screenshot:</h4>
+                            <ul class="text-sm">
+                                <li><input type="checkbox" class="mr-2"> SS2.2: Test dosyası üretimi komutu</li>
+                                <li><input type="checkbox" class="mr-2"> SS2.3: Test dosyası boyutu</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Task 2.3 -->
+                    <div class="card-gradient rounded-xl p-6 border border-green-500/30 mb-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-xl font-semibold flex items-center gap-2">
+                                <span class="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center text-sm font-bold text-gray-900">3</span>
+                                10GB Veri Üretimi
+                            </h3>
+                            <span class="text-sm bg-red-500/20 text-red-300 px-3 py-1 rounded-full">23-24 Aralık • UZUN SÜRER</span>
+                        </div>
+
+                        <div class="bg-yellow-500/10 border border-yellow-500/30 rounded-lg p-4 mb-4">
+                            <p class="text-yellow-300">
+                                <i class="fas fa-clock mr-2"></i>
+                                <strong>TAHMİNİ SÜRE:</strong>
+                            </p>
+                            <ul class="text-sm text-gray-300 mt-2">
+                                <li>• SSD disk: 30-45 dakika</li>
+                                <li>• HDD disk: 45-90 dakika</li>
+                                <li>• Eski laptop: 90-120 dakika</li>
+                            </ul>
+                        </div>
+
+                        <div class="bg-gray-800/50 rounded-lg p-4">
+                            <h4 class="font-semibold mb-3 text-green-400">📋 Komut:</h4>
+                            <div class="code-block p-4 relative">
+                                <button onclick="copyCode(this)" class="copy-btn absolute top-2 right-2 px-2 py-1 bg-gray-700 rounded text-xs">
+                                    <i class="fas fa-copy"></i> Kopyala
+                                </button>
+                                <pre class="text-green-400 text-sm"># 10GB dosya üret
+python generate_data.py
+
+# Çıktı şöyle görünecek:
+# Progress: XX.XX% | Size: X.XX GB | Speed: XX MB/s | ETA: XX min</pre>
+                            </div>
+                        </div>
+
+                        <div class="bg-gray-800/50 rounded-lg p-4 mt-4">
+                            <h4 class="font-semibold mb-3 text-green-400">📸 Screenshot:</h4>
+                            <ul class="text-sm">
+                                <li><input type="checkbox" class="mr-2"> SS2.4: Üretim başlangıcı</li>
+                                <li><input type="checkbox" class="mr-2"> SS2.5: Üretim ortası (~50%)</li>
+                                <li><input type="checkbox" class="mr-2"> SS2.6: Üretim tamamlandı</li>
+                                <li><input type="checkbox" class="mr-2"> SS2.7: Final dosya boyutu (10GB+)</li>
+                            </ul>
+                        </div>
+
+                        <div class="bg-green-500/10 border border-green-500/30 rounded-lg p-4 mt-4">
+                            <h4 class="font-semibold mb-2 text-green-400">📤 Member 1'e Gönder:</h4>
+                            <div class="bg-gray-900 rounded p-3 text-sm font-mono">
+                                <p>✅ 10GB Veri hazır!</p>
+                                <p class="mt-2">Dosya: large_text_data.txt</p>
+                                <p>Boyut: 10.XX GB</p>
+                                <p class="mt-2">S3'e yüklemeye hazırım!</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Task 2.4 -->
+                    <div class="card-gradient rounded-xl p-6 border border-green-500/30">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-xl font-semibold flex items-center gap-2">
+                                <span class="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center text-sm font-bold text-gray-900">4</span>
+                                S3'e Upload (Member 1 ile birlikte)
+                            </h3>
+                            <span class="text-sm bg-blue-500/20 text-blue-300 px-3 py-1 rounded-full">24 Aralık</span>
+                        </div>
+
+                        <div class="bg-gray-800/50 rounded-lg p-4">
+                            <p class="text-gray-300 mb-3">Member 1 ile birlikte çalışarak S3'e yükle. Member 1'in verdiği bucket adını kullan.</p>
+                            <div class="code-block p-4 relative">
+                                <button onclick="copyCode(this)" class="copy-btn absolute top-2 right-2 px-2 py-1 bg-gray-700 rounded text-xs">
+                                    <i class="fas fa-copy"></i> Kopyala
+                                </button>
+                                <pre class="text-green-400 text-sm"># Yükle
+aws s3 cp large_text_data.txt s3://[BUCKET-ADI]/input/ --region us-east-1
+
+# Doğrula
+aws s3 ls s3://[BUCKET-ADI]/input/</pre>
+                            </div>
+                        </div>
+
+                        <div class="bg-gray-800/50 rounded-lg p-4 mt-4">
+                            <h4 class="font-semibold mb-3 text-green-400">📸 Screenshot:</h4>
+                            <ul class="text-sm">
+                                <li><input type="checkbox" class="mr-2"> SS2.8: AWS CLI version</li>
+                                <li><input type="checkbox" class="mr-2"> SS2.9: Upload komutu çalışırken</li>
+                                <li><input type="checkbox" class="mr-2"> SS2.10: Upload tamamlandı</li>
+                                <li><input type="checkbox" class="mr-2"> SS2.11: S3 ls doğrulama</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Member 3 Section -->
+            <section id="member3" class="section">
+                <div class="max-w-5xl mx-auto">
+                    <div class="flex items-center gap-4 mb-6">
+                        <div class="w-16 h-16 bg-purple-500/20 rounded-xl flex items-center justify-center">
+                            <i class="fas fa-code text-purple-500 text-2xl"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-3xl font-bold">Member 3 - Developer</h2>
+                            <p class="text-gray-400">Spark Kodu + EMR'de Çalıştırma</p>
+                        </div>
+                    </div>
+
+                    <!-- Task 3.1 -->
+                    <div class="card-gradient rounded-xl p-6 border border-purple-500/30 mb-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-xl font-semibold flex items-center gap-2">
+                                <span class="w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center text-sm font-bold text-gray-900">1</span>
+                                Kodu İncele ve Hazırla
+                            </h3>
+                            <span class="text-sm bg-blue-500/20 text-blue-300 px-3 py-1 rounded-full">23-24 Aralık</span>
+                        </div>
+
+                        <div class="bg-gray-800/50 rounded-lg p-4">
+                            <h4 class="font-semibold mb-3 text-purple-400">📋 Yapılacaklar:</h4>
+                            <ol class="space-y-2 text-sm">
+                                <li>1. <a href="#" onclick="showSection('codes')" class="text-blue-400 hover:underline">Kodlar sayfasından</a> wordcount.py'yi indir</li>
+                                <li>2. Kodu oku ve anla (MapReduce mantığı)</li>
+                                <li>3. Member 1'den bucket adını al</li>
+                                <li>4. Kodda S3 path'lerini güncelle</li>
+                            </ol>
+                        </div>
+
+                        <div class="bg-gray-800/50 rounded-lg p-4 mt-4">
+                            <h4 class="font-semibold mb-3 text-purple-400">📋 Kodda Değiştirilecek Yerler:</h4>
+                            <div class="code-block p-4">
+                                <pre class="text-purple-400 text-sm"># Bu satırları güncelle:
+INPUT_PATH = "s3://cse423-wordcount-[OGRENCI-NO]/input/large_text_data.txt"
+OUTPUT_PATH = "s3://cse423-wordcount-[OGRENCI-NO]/output/"</pre>
+                            </div>
+                        </div>
+
+                        <div class="bg-gray-800/50 rounded-lg p-4 mt-4">
+                            <h4 class="font-semibold mb-3 text-green-400">📸 Screenshot:</h4>
+                            <ul class="text-sm">
+                                <li><input type="checkbox" class="mr-2"> SS3.1: wordcount.py dosyası açık</li>
+                                <li><input type="checkbox" class="mr-2"> SS3.2: Güncellenmiş S3 path'leri</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Task 3.2 -->
+                    <div class="card-gradient rounded-xl p-6 border border-purple-500/30 mb-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-xl font-semibold flex items-center gap-2">
+                                <span class="w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center text-sm font-bold text-gray-900">2</span>
+                                Kodu S3'e Yükle
+                            </h3>
+                            <span class="text-sm bg-blue-500/20 text-blue-300 px-3 py-1 rounded-full">24 Aralık</span>
+                        </div>
+
+                        <div class="bg-gray-800/50 rounded-lg p-4">
+                            <div class="code-block p-4 relative">
+                                <button onclick="copyCode(this)" class="copy-btn absolute top-2 right-2 px-2 py-1 bg-gray-700 rounded text-xs">
+                                    <i class="fas fa-copy"></i> Kopyala
+                                </button>
+                                <pre class="text-purple-400 text-sm">aws s3 cp wordcount.py s3://[BUCKET-ADI]/scripts/</pre>
+                            </div>
+                        </div>
+
+                        <div class="bg-gray-800/50 rounded-lg p-4 mt-4">
+                            <h4 class="font-semibold mb-3 text-green-400">📸 Screenshot:</h4>
+                            <ul class="text-sm">
+                                <li><input type="checkbox" class="mr-2"> SS3.3: S3'de scripts/ klasörü ve kod</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Task 3.3 -->
+                    <div class="card-gradient rounded-xl p-6 border border-purple-500/30 mb-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-xl font-semibold flex items-center gap-2">
+                                <span class="w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center text-sm font-bold text-gray-900">3</span>
+                                EMR'e SSH Bağlantısı
+                            </h3>
+                            <span class="text-sm bg-blue-500/20 text-blue-300 px-3 py-1 rounded-full">25-26 Aralık</span>
+                        </div>
+
+                        <div class="bg-red-500/10 border border-red-500/30 rounded-lg p-4 mb-4">
+                            <p class="text-red-300 text-sm">
+                                <i class="fas fa-clock mr-2"></i>
+                                <strong>BAĞIMLILIK:</strong> Member 1'in EMR cluster kurmasını bekle!
+                            </p>
+                        </div>
+
+                        <div class="bg-gray-800/50 rounded-lg p-4">
+                            <h4 class="font-semibold mb-3 text-purple-400">📋 Windows (PuTTY):</h4>
+                            <ol class="space-y-2 text-sm">
+                                <li>1. PuTTY aç</li>
+                                <li>2. Host Name: <code class="bg-gray-700 px-2 py-0.5 rounded">hadoop@[MASTER-DNS]</code></li>
+                                <li>3. Port: 22</li>
+                                <li>4. Connection > SSH > Auth > .ppk dosyasını seç</li>
+                                <li>5. Open</li>
+                            </ol>
+                        </div>
+
+                        <div class="bg-gray-800/50 rounded-lg p-4 mt-4">
+                            <h4 class="font-semibold mb-3 text-purple-400">📋 Mac/Linux:</h4>
+                            <div class="code-block p-4 relative">
+                                <button onclick="copyCode(this)" class="copy-btn absolute top-2 right-2 px-2 py-1 bg-gray-700 rounded text-xs">
+                                    <i class="fas fa-copy"></i> Kopyala
+                                </button>
+                                <pre class="text-purple-400 text-sm">chmod 400 keypair.pem
+ssh -i keypair.pem hadoop@[MASTER-DNS]</pre>
+                            </div>
+                        </div>
+
+                        <div class="bg-gray-800/50 rounded-lg p-4 mt-4">
+                            <h4 class="font-semibold mb-3 text-green-400">📸 Screenshot:</h4>
+                            <ul class="text-sm">
+                                <li><input type="checkbox" class="mr-2"> SS3.4: PuTTY ayarları</li>
+                                <li><input type="checkbox" class="mr-2"> SS3.5: SSH bağlantısı başarılı</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Task 3.4 -->
+                    <div class="card-gradient rounded-xl p-6 border border-purple-500/30 mb-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-xl font-semibold flex items-center gap-2">
+                                <span class="w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center text-sm font-bold text-gray-900">4</span>
+                                Spark Job Çalıştırma
+                            </h3>
+                            <span class="text-sm bg-red-500/20 text-red-300 px-3 py-1 rounded-full">26 Aralık • ANA GÖREV</span>
+                        </div>
+
+                        <div class="bg-gray-800/50 rounded-lg p-4">
+                            <h4 class="font-semibold mb-3 text-purple-400">📋 Komutlar:</h4>
+                            <div class="code-block p-4 relative">
+                                <button onclick="copyCode(this)" class="copy-btn absolute top-2 right-2 px-2 py-1 bg-gray-700 rounded text-xs">
+                                    <i class="fas fa-copy"></i> Kopyala
+                                </button>
+                                <pre class="text-purple-400 text-sm"># 1. Kodu S3'den çek
+aws s3 cp s3://[BUCKET-ADI]/scripts/wordcount.py .
+
+# 2. Spark job çalıştır
+spark-submit \
+    --master yarn \
+    --deploy-mode client \
+    --num-executors 4 \
+    --executor-memory 4g \
+    --executor-cores 2 \
+    wordcount.py</pre>
+                            </div>
+                            <p class="text-sm text-gray-400 mt-3">⏱️ Tahmini süre: 5-15 dakika</p>
+                        </div>
+
+                        <div class="bg-gray-800/50 rounded-lg p-4 mt-4">
+                            <h4 class="font-semibold mb-3 text-green-400">📸 Screenshot:</h4>
+                            <ul class="text-sm">
+                                <li><input type="checkbox" class="mr-2"> SS3.6: spark-submit komutu</li>
+                                <li><input type="checkbox" class="mr-2"> SS3.7: Job çalışırken</li>
+                                <li><input type="checkbox" class="mr-2"> SS3.8: Job tamamlandı - sonuçlar</li>
+                                <li><input type="checkbox" class="mr-2"> SS3.9: Top 100 kelime listesi</li>
+                            </ul>
+                        </div>
+
+                        <div class="bg-green-500/10 border border-green-500/30 rounded-lg p-4 mt-4">
+                            <h4 class="font-semibold mb-2 text-green-400">📤 Member 4'e Gönder:</h4>
+                            <div class="bg-gray-900 rounded p-3 text-sm font-mono">
+                                <p>✅ Spark job tamamlandı!</p>
+                                <p class="mt-2">Execution time: XX dk XX sn</p>
+                                <p>Total words: XXX,XXX,XXX</p>
+                                <p>Unique words: XXX,XXX</p>
+                                <p class="mt-2">Output: s3://[BUCKET]/output/</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Task 3.5 -->
+                    <div class="card-gradient rounded-xl p-6 border border-purple-500/30">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-xl font-semibold flex items-center gap-2">
+                                <span class="w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center text-sm font-bold text-gray-900">5</span>
+                                Spark UI Screenshot'ları
+                            </h3>
+                            <span class="text-sm bg-blue-500/20 text-blue-300 px-3 py-1 rounded-full">26 Aralık</span>
+                        </div>
+
+                        <div class="bg-gray-800/50 rounded-lg p-4">
+                            <h4 class="font-semibold mb-3 text-purple-400">📋 Spark UI Erişimi:</h4>
+                            <p class="text-sm text-gray-300 mb-3">EMR Console > Cluster > Application History > Spark History Server</p>
+                            <p class="text-sm text-gray-400">Veya: http://[MASTER-DNS]:18080</p>
+                        </div>
+
+                        <div class="bg-gray-800/50 rounded-lg p-4 mt-4">
+                            <h4 class="font-semibold mb-3 text-green-400">📸 Screenshot:</h4>
+                            <ul class="text-sm">
+                                <li><input type="checkbox" class="mr-2"> SS3.10: Spark UI - Jobs sekmesi</li>
+                                <li><input type="checkbox" class="mr-2"> SS3.11: Spark UI - Stages sekmesi</li>
+                                <li><input type="checkbox" class="mr-2"> SS3.12: Spark UI - Executors sekmesi</li>
+                                <li><input type="checkbox" class="mr-2"> SS3.13: Spark UI - Job DAG</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Member 4 Section -->
+            <section id="member4" class="section">
+                <div class="max-w-5xl mx-auto">
+                    <div class="flex items-center gap-4 mb-6">
+                        <div class="w-16 h-16 bg-pink-500/20 rounded-xl flex items-center justify-center">
+                            <i class="fas fa-check-circle text-pink-500 text-2xl"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-3xl font-bold">Member 4 - Testing & Monitoring</h2>
+                            <p class="text-gray-400">Sonuç Doğrulama + Metrikler + Sorun Giderme</p>
+                        </div>
+                    </div>
+
+                    <!-- Task 4.1 -->
+                    <div class="card-gradient rounded-xl p-6 border border-pink-500/30 mb-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-xl font-semibold flex items-center gap-2">
+                                <span class="w-8 h-8 bg-pink-500 rounded-full flex items-center justify-center text-sm font-bold text-gray-900">1</span>
+                                S3 Output Doğrulama
+                            </h3>
+                            <span class="text-sm bg-blue-500/20 text-blue-300 px-3 py-1 rounded-full">26 Aralık</span>
+                        </div>
+
+                        <div class="bg-red-500/10 border border-red-500/30 rounded-lg p-4 mb-4">
+                            <p class="text-red-300 text-sm">
+                                <i class="fas fa-clock mr-2"></i>
+                                <strong>BAĞIMLILIK:</strong> Member 3'ün Spark job'ı tamamlamasını bekle!
+                            </p>
+                        </div>
+
+                        <div class="bg-gray-800/50 rounded-lg p-4">
+                            <h4 class="font-semibold mb-3 text-pink-400">📋 Komutlar:</h4>
+                            <div class="code-block p-4 relative">
+                                <button onclick="copyCode(this)" class="copy-btn absolute top-2 right-2 px-2 py-1 bg-gray-700 rounded text-xs">
+                                    <i class="fas fa-copy"></i> Kopyala
+                                </button>
+                                <pre class="text-pink-400 text-sm"># Output klasörünü listele
+aws s3 ls s3://[BUCKET-ADI]/output/
+
+# Örnek dosyayı indir
+aws s3 cp s3://[BUCKET-ADI]/output/part-00000 ./sample_output.txt
+
+# İçeriğe bak
+head -50 sample_output.txt</pre>
+                            </div>
+                        </div>
+
+                        <div class="bg-gray-800/50 rounded-lg p-4 mt-4">
+                            <h4 class="font-semibold mb-3 text-green-400">📸 Screenshot:</h4>
+                            <ul class="text-sm">
+                                <li><input type="checkbox" class="mr-2"> SS4.1: S3 output klasörü</li>
+                                <li><input type="checkbox" class="mr-2"> SS4.2: Output dosyası içeriği</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Task 4.2 -->
+                    <div class="card-gradient rounded-xl p-6 border border-pink-500/30 mb-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-xl font-semibold flex items-center gap-2">
+                                <span class="w-8 h-8 bg-pink-500 rounded-full flex items-center justify-center text-sm font-bold text-gray-900">2</span>
+                                YARN & CloudWatch Monitoring
+                            </h3>
+                            <span class="text-sm bg-blue-500/20 text-blue-300 px-3 py-1 rounded-full">26 Aralık</span>
+                        </div>
+
+                        <div class="bg-gray-800/50 rounded-lg p-4">
+                            <h4 class="font-semibold mb-3 text-pink-400">📋 YARN Resource Manager:</h4>
+                            <p class="text-sm text-gray-300 mb-2">EMR Console > Cluster > Application History > YARN Timeline Server</p>
+                            <p class="text-sm text-gray-400">Veya: http://[MASTER-DNS]:8088</p>
+                        </div>
+
+                        <div class="bg-gray-800/50 rounded-lg p-4 mt-4">
+                            <h4 class="font-semibold mb-3 text-pink-400">📋 CloudWatch:</h4>
+                            <ol class="text-sm space-y-1">
+                                <li>1. AWS Console > CloudWatch</li>
+                                <li>2. Metrics > All metrics > EMR</li>
+                                <li>3. CPU, Memory grafiklerini bul</li>
+                            </ol>
+                        </div>
+
+                        <div class="bg-gray-800/50 rounded-lg p-4 mt-4">
+                            <h4 class="font-semibold mb-3 text-green-400">📸 Screenshot:</h4>
+                            <ul class="text-sm">
+                                <li><input type="checkbox" class="mr-2"> SS4.3: YARN Resource Manager</li>
+                                <li><input type="checkbox" class="mr-2"> SS4.4: Applications listesi</li>
+                                <li><input type="checkbox" class="mr-2"> SS4.5: Job detayları</li>
+                                <li><input type="checkbox" class="mr-2"> SS4.6: CloudWatch EMR metrics</li>
+                                <li><input type="checkbox" class="mr-2"> SS4.7: CPU utilization</li>
+                                <li><input type="checkbox" class="mr-2"> SS4.8: Memory utilization</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Task 4.3 -->
+                    <div class="card-gradient rounded-xl p-6 border border-pink-500/30 mb-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-xl font-semibold flex items-center gap-2">
+                                <span class="w-8 h-8 bg-pink-500 rounded-full flex items-center justify-center text-sm font-bold text-gray-900">3</span>
+                                Performance Metrikleri Toplama
+                            </h3>
+                            <span class="text-sm bg-blue-500/20 text-blue-300 px-3 py-1 rounded-full">26-27 Aralık</span>
+                        </div>
+
+                        <div class="bg-gray-800/50 rounded-lg p-4">
+                            <h4 class="font-semibold mb-3 text-pink-400">📋 Toplanacak Metrikler:</h4>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                                <div>
+                                    <p class="font-semibold text-gray-300 mb-2">Cluster Bilgileri:</p>
+                                    <ul class="space-y-1 text-gray-400">
+                                        <li>• Instance tipi: ________</li>
+                                        <li>• Node sayısı: ________</li>
+                                        <li>• Toplam vCPU: ________</li>
+                                        <li>• Toplam RAM: ________</li>
+                                    </ul>
+                                </div>
+                                <div>
+                                    <p class="font-semibold text-gray-300 mb-2">Job Metrikleri:</p>
+                                    <ul class="space-y-1 text-gray-400">
+                                        <li>• Başlangıç: ________</li>
+                                        <li>• Bitiş: ________</li>
+                                        <li>• Toplam süre: ________</li>
+                                        <li>• İşleme hızı: ________ GB/dk</li>
+                                    </ul>
+                                </div>
+                                <div>
+                                    <p class="font-semibold text-gray-300 mb-2">Sonuç Metrikleri:</p>
+                                    <ul class="space-y-1 text-gray-400">
+                                        <li>• Toplam kelime: ________</li>
+                                        <li>• Benzersiz kelime: ________</li>
+                                    </ul>
+                                </div>
+                                <div>
+                                    <p class="font-semibold text-gray-300 mb-2">Maliyet:</p>
+                                    <ul class="space-y-1 text-gray-400">
+                                        <li>• Toplam harcama: $________</li>
+                                        <li>• GB başına: $________</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-gray-800/50 rounded-lg p-4 mt-4">
+                            <h4 class="font-semibold mb-3 text-green-400">📸 Screenshot:</h4>
+                            <ul class="text-sm">
+                                <li><input type="checkbox" class="mr-2"> SS4.9: Learner Lab toplam harcama</li>
+                                <li><input type="checkbox" class="mr-2"> SS4.10: AWS Billing (varsa)</li>
+                                <li><input type="checkbox" class="mr-2"> SS4.11: Terminal output (execution time)</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Task 4.4 -->
+                    <div class="card-gradient rounded-xl p-6 border border-pink-500/30">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-xl font-semibold flex items-center gap-2">
+                                <span class="w-8 h-8 bg-pink-500 rounded-full flex items-center justify-center text-sm font-bold text-gray-900">4</span>
+                                Final Onay
+                            </h3>
+                            <span class="text-sm bg-green-500/20 text-green-300 px-3 py-1 rounded-full">26 Aralık • SON ADIM</span>
+                        </div>
+
+                        <div class="bg-gray-800/50 rounded-lg p-4">
+                            <h4 class="font-semibold mb-3 text-pink-400">📋 Kontrol Listesi:</h4>
+                            <ul class="space-y-2 text-sm">
+                                <li><input type="checkbox" class="mr-2"> Output dosyaları S3'de var</li>
+                                <li><input type="checkbox" class="mr-2"> Kelime sayıları mantıklı</li>
+                                <li><input type="checkbox" class="mr-2"> Execution time kabul edilebilir</li>
+                                <li><input type="checkbox" class="mr-2"> Tüm metrikler toplandı</li>
+                                <li><input type="checkbox" class="mr-2"> Tüm screenshot'lar tamam</li>
+                            </ul>
+                        </div>
+
+                        <div class="bg-green-500/10 border border-green-500/30 rounded-lg p-4 mt-4">
+                            <h4 class="font-semibold mb-2 text-green-400">📤 TÜM EKİBE Gönder:</h4>
+                            <div class="bg-gray-900 rounded p-3 text-sm font-mono">
+                                <p>✅ PROJE TAMAMLANDI!</p>
+                                <p class="mt-2">Final Metrikler:</p>
+                                <p>- Veri: 10 GB</p>
+                                <p>- Süre: XX dakika</p>
+                                <p>- Toplam kelime: XXX,XXX,XXX</p>
+                                <p>- Maliyet: $X.XX</p>
+                                <p class="mt-2 text-yellow-400">Member 1: Cluster'ı TERMINATE et!</p>
+                                <p class="text-blue-400">HERKES: Rapor yazımına başlayabiliriz!</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Codes Section -->
+            <section id="codes" class="section">
+                <div class="max-w-5xl mx-auto">
+                    <h2 class="text-3xl font-bold mb-6 flex items-center gap-3">
+                        <i class="fas fa-file-code text-blue-400"></i> Kodlar
+                    </h2>
+
+                    <!-- wordcount.py -->
+                    <div class="card-gradient rounded-xl p-6 border border-gray-700 mb-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-xl font-semibold">wordcount.py</h3>
+                            <button onclick="copyCode(document.getElementById('wordcount-code'))" class="px-4 py-2 bg-blue-500 hover:bg-blue-600 rounded-lg text-sm transition">
+                                <i class="fas fa-copy mr-2"></i>Tümünü Kopyala
+                            </button>
+                        </div>
+                        <div class="code-block p-4 overflow-x-auto" id="wordcount-code">
+                            <pre class="text-green-400 text-sm">#!/usr/bin/env python3
+"""
+CSE423 Cloud Computing - Word Count with Apache Spark
+Adnan Menderes University
+"""
+
+from pyspark.sql import SparkSession
+import time
+
+def create_spark_session():
+    """Initialize and return Spark Session"""
+    return SparkSession.builder \
+        .appName("CSE423-WordCount-10GB") \
+        .config("spark.sql.shuffle.partitions", "200") \
+        .getOrCreate()
+
+def perform_word_count(sc, input_path):
+    """Perform MapReduce word count operation"""
+    text_rdd = sc.textFile(input_path)
+    
+    word_counts = text_rdd \
+        .flatMap(lambda line: line.lower().split()) \
+        .filter(lambda word: word.isalpha() and len(word) > 1) \
+        .map(lambda word: (word, 1)) \
+        .reduceByKey(lambda a, b: a + b)
+    
+    return word_counts
+
+def get_statistics(word_counts):
+    """Calculate and return word count statistics"""
+    unique_words = word_counts.count()
+    total_words = word_counts.map(lambda x: x[1]).sum()
+    top_100 = word_counts \
+        .sortBy(lambda x: x[1], ascending=False) \
+        .take(100)
+    
+    return unique_words, total_words, top_100
+
+def main():
+    # ⚠️ BU PATH'LERİ GÜNCELLEYİN!
+    INPUT_PATH = "s3://cse423-wordcount-[OGRENCI-NO]/input/large_text_data.txt"
+    OUTPUT_PATH = "s3://cse423-wordcount-[OGRENCI-NO]/output/"
+    
+    print("=" * 70)
+    print("         CSE423 CLOUD COMPUTING - WORD COUNT PROJECT")
+    print("=" * 70)
+    
+    spark = create_spark_session()
+    sc = spark.sparkContext
+    
+    print(f"Spark Version: {spark.version}")
+    print(f"Application ID: {sc.applicationId}")
+    
+    start_time = time.time()
+    
+    word_counts = perform_word_count(sc, INPUT_PATH)
+    word_counts.cache()
+    
+    unique_words, total_words, top_100 = get_statistics(word_counts)
+    
+    end_time = time.time()
+    execution_time = end_time - start_time
+    
+    print(f"\nTotal Unique Words: {unique_words:,}")
+    print(f"Total Word Count: {total_words:,}")
+    print(f"Execution Time: {execution_time:.2f} seconds")
+    print(f"Processing Speed: {10 / (execution_time / 60):.2f} GB/minute")
+    
+    print("\nTOP 100 WORDS:")
+    for i, (word, count) in enumerate(top_100, 1):
+        print(f"{i:3}. {word:20} : {count:,}")
+    
+    # Save results
+    sorted_counts = word_counts.sortBy(lambda x: x[1], ascending=False)
+    sorted_counts.saveAsTextFile(OUTPUT_PATH)
+    
+    print(f"\nResults saved to: {OUTPUT_PATH}")
+    spark.stop()
+
+if __name__ == "__main__":
+    main()</pre>
+                        </div>
+                    </div>
+
+                    <!-- generate_data.py -->
+                    <div class="card-gradient rounded-xl p-6 border border-gray-700">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-xl font-semibold">generate_data.py</h3>
+                            <button onclick="copyCode(document.getElementById('generate-code'))" class="px-4 py-2 bg-blue-500 hover:bg-blue-600 rounded-lg text-sm transition">
+                                <i class="fas fa-copy mr-2"></i>Tümünü Kopyala
+                            </button>
+                        </div>
+                        <div class="code-block p-4 overflow-x-auto" id="generate-code">
+                            <pre class="text-green-400 text-sm">#!/usr/bin/env python3
+"""
+CSE423 - Synthetic Data Generator
+Generates a 10GB text file for word count analysis
+
+Usage:
+    python generate_data.py         # Full 10GB
+    python generate_data.py --test  # Test 100MB
+"""
+
+import random
+import time
+import os
+import sys
+
+COMMON_WORDS = [
+    'the', 'be', 'to', 'of', 'and', 'a', 'in', 'that', 'have', 'i',
+    'it', 'for', 'not', 'on', 'with', 'he', 'as', 'you', 'do', 'at',
+    'this', 'but', 'his', 'by', 'from', 'they', 'we', 'say', 'her', 'she',
+    'cloud', 'computing', 'data', 'server', 'cluster', 'node', 'network',
+    'storage', 'memory', 'processor', 'distributed', 'parallel', 'hadoop',
+    'spark', 'mapreduce', 'aws', 'azure', 'google', 'amazon', 'instance',
+    'software', 'hardware', 'application', 'algorithm', 'code', 'programming',
+    'and', 'or', 'but', 'so', 'because', 'if', 'when', 'where', 'which'
+]
+
+def generate_paragraph():
+    num_sentences = random.randint(3, 8)
+    sentences = []
+    for _ in range(num_sentences):
+        length = random.randint(8, 25)
+        words = random.choices(COMMON_WORDS, k=length)
+        sentences.append(' '.join(words))
+    return '. '.join(sentences) + '.\n'
+
+def generate_large_file(filename, target_size_gb=10):
+    target_size = target_size_gb * 1024 * 1024 * 1024
+    current_size = 0
+    
+    print(f"Generating {target_size_gb}GB file: {filename}")
+    start_time = time.time()
+    
+    with open(filename, 'w', encoding='utf-8') as f:
+        while current_size < target_size:
+            paragraph = generate_paragraph()
+            f.write(paragraph)
+            current_size += len(paragraph.encode('utf-8'))
+            
+            if current_size % (1024 * 1024 * 500) < 1000:
+                progress = (current_size / target_size) * 100
+                elapsed = time.time() - start_time
+                speed = current_size / elapsed / (1024 * 1024)
+                eta = (target_size - current_size) / (current_size / elapsed) / 60
+                print(f"Progress: {progress:.1f}% | Size: {current_size/1024**3:.2f}GB | Speed: {speed:.1f}MB/s | ETA: {eta:.1f}min")
+    
+    print(f"\nDone! File: {filename}, Size: {os.path.getsize(filename)/1024**3:.2f}GB")
+
+if __name__ == "__main__":
+    if len(sys.argv) > 1 and sys.argv[1] == '--test':
+        # 100MB test file
+        target = 100 * 1024 * 1024
+        current = 0
+        with open("test_data.txt", 'w') as f:
+            while current < target:
+                p = generate_paragraph()
+                f.write(p)
+                current += len(p.encode('utf-8'))
+        print(f"Test file created: test_data.txt ({os.path.getsize('test_data.txt')/1024**2:.1f}MB)")
+    else:
+        generate_large_file("large_text_data.txt", 10)</pre>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Report Template Section -->
+            <section id="report" class="section">
+                <div class="max-w-5xl mx-auto">
+                    <h2 class="text-3xl font-bold mb-6 flex items-center gap-3">
+                        <i class="fas fa-file-alt text-blue-400"></i> Rapor Şablonu (Logbook)
+                    </h2>
+
+                    <div class="card-gradient rounded-xl p-6 border border-gray-700">
+                        <div class="bg-gray-800/50 rounded-lg p-6 font-mono text-sm overflow-x-auto">
+                            <pre class="text-gray-300">
+==============================================
+CSE423 CLOUD COMPUTING
+PROJECT REPORT - WORD COUNT ANALYSIS
+==============================================
+
+Team Members:
+1. [Student No] - [Name] - Infrastructure Lead
+2. [Student No] - [Name] - Data Engineer
+3. [Student No] - [Name] - Developer
+4. [Student No] - [Name] - Testing & Monitoring
+
+==============================================
+1. INTRODUCTION
+==============================================
+This project implements a distributed word count 
+analysis on a 10GB text file using Apache Spark 
+on AWS EMR cluster.
+
+==============================================
+2. WORKSHARING POLICY
+==============================================
+Member 1: S3 setup, EMR cluster, cost management
+Member 2: Data generation, S3 upload
+Member 3: Spark code, job execution
+Member 4: Testing, metrics, validation
+
+==============================================
+3. DATA PREPARATION
+==============================================
+- Data source: Synthetic generated text
+- Data size: 10 GB
+- Format: Plain text (.txt)
+
+[INSERT SCREENSHOT: Data generation]
+[INSERT SCREENSHOT: File size verification]
+
+==============================================
+4. AWS S3 SETUP
+==============================================
+- Bucket name: cse423-wordcount-XXXXX
+- Region: us-east-1
+
+[INSERT SCREENSHOT: S3 bucket]
+[INSERT SCREENSHOT: Uploaded data]
+
+==============================================
+5. EMR CLUSTER CONFIGURATION
+==============================================
+- EMR Release: emr-6.15.0
+- Applications: Spark 3.x
+- Master node: m5.xlarge (4 vCPU, 16GB RAM)
+- Core nodes: 2 x m5.xlarge
+- Total vCPUs: 12
+- Total Memory: 48 GB
+
+[INSERT SCREENSHOT: EMR cluster config]
+[INSERT SCREENSHOT: Cluster status]
+
+==============================================
+6. SPARK APPLICATION CODE
+==============================================
+[INSERT CODE]
+
+Code explanation:
+- textFile(): Reads input from S3
+- flatMap(): Splits lines into words
+- map(): Creates (word, 1) pairs
+- reduceByKey(): Aggregates counts
+
+==============================================
+7. JOB EXECUTION
+==============================================
+- Start time: XX:XX
+- End time: XX:XX
+- Total execution time: XX minutes
+
+[INSERT SCREENSHOT: Job submission]
+[INSERT SCREENSHOT: Spark UI]
+
+==============================================
+8. RESULTS
+==============================================
+- Total words processed: XXX,XXX,XXX
+- Unique words: XXX,XXX
+
+Top 10 most frequent words:
+1. the - XXX,XXX
+2. and - XXX,XXX
+...
+
+[INSERT SCREENSHOT: Results]
+
+==============================================
+9. PERFORMANCE ANALYSIS
+==============================================
+- Data processed: 10 GB
+- Cluster nodes: 3
+- Execution time: XX seconds
+- Throughput: X.X GB/minute
+
+==============================================
+10. COST ANALYSIS
+==============================================
+- Total AWS cost: $X.XX
+- Cost per GB: $X.XX
+
+==============================================
+11. CONCLUSION
+==============================================
+Successfully implemented distributed word count
+using Spark on AWS EMR. The cluster processed
+10GB of data in XX minutes.
+
+==============================================
+12. REFERENCES
+==============================================
+- AWS EMR Documentation
+- Apache Spark Documentation
+                            </pre>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Emergency Section -->
+            <section id="emergency" class="section">
+                <div class="max-w-5xl mx-auto">
+                    <h2 class="text-3xl font-bold mb-6 flex items-center gap-3">
+                        <i class="fas fa-exclamation-triangle text-red-400"></i> Acil Durumlar & Sorun Giderme
+                    </h2>
+
+                    <div class="space-y-4">
+                        <div class="card-gradient rounded-xl p-6 border border-red-500/30">
+                            <h3 class="text-lg font-semibold mb-3 text-red-400">
+                                <i class="fas fa-clock mr-2"></i> Veri üretimi çok uzun sürüyor
+                            </h3>
+                            <p class="text-gray-300 mb-3">Çözüm: Wikipedia dump indir</p>
+                            <div class="code-block p-3">
+                                <pre class="text-green-400 text-sm">wget https://dumps.wikimedia.org/enwiki/latest/enwiki-latest-pages-articles.xml.bz2
+bunzip2 enwiki-latest-pages-articles.xml.bz2</pre>
+                            </div>
+                        </div>
+
+                        <div class="card-gradient rounded-xl p-6 border border-red-500/30">
+                            <h3 class="text-lg font-semibold mb-3 text-red-400">
+                                <i class="fas fa-upload mr-2"></i> S3 upload çok yavaş
+                            </h3>
+                            <p class="text-gray-300 mb-3">Çözüm: Dosyayı sıkıştır</p>
+                            <div class="code-block p-3">
+                                <pre class="text-green-400 text-sm"># Sıkıştır
+gzip large_text_data.txt
+
+# Sıkıştırılmış yükle
+aws s3 cp large_text_data.txt.gz s3://bucket/input/
+
+# Spark .gz dosyasını otomatik açar!</pre>
+                            </div>
+                        </div>
+
+                        <div class="card-gradient rounded-xl p-6 border border-red-500/30">
+                            <h3 class="text-lg font-semibold mb-3 text-red-400">
+                                <i class="fas fa-server mr-2"></i> EMR cluster başlamıyor
+                            </h3>
+                            <p class="text-gray-300 mb-3">Çözümler:</p>
+                            <ul class="text-sm text-gray-400 space-y-1">
+                                <li>• Farklı region dene (us-west-2)</li>
+                                <li>• Daha küçük instance tipi dene (m4.large)</li>
+                                <li>• Spot instance kullan</li>
+                            </ul>
+                        </div>
+
+                        <div class="card-gradient rounded-xl p-6 border border-red-500/30">
+                            <h3 class="text-lg font-semibold mb-3 text-red-400">
+                                <i class="fas fa-memory mr-2"></i> Out of Memory hatası
+                            </h3>
+                            <p class="text-gray-300 mb-3">Çözüm: Spark ayarlarını değiştir</p>
+                            <div class="code-block p-3">
+                                <pre class="text-green-400 text-sm">spark-submit \
+    --executor-memory 6g \
+    --driver-memory 4g \
+    --conf spark.sql.shuffle.partitions=400 \
+    wordcount.py</pre>
+                            </div>
+                        </div>
+
+                        <div class="card-gradient rounded-xl p-6 border border-red-500/30">
+                            <h3 class="text-lg font-semibold mb-3 text-red-400">
+                                <i class="fas fa-lock mr-2"></i> S3 Access Denied hatası
+                            </h3>
+                            <p class="text-gray-300 mb-3">Çözümler:</p>
+                            <ul class="text-sm text-gray-400 space-y-1">
+                                <li>• Region'un us-east-1 olduğundan emin ol</li>
+                                <li>• AWS credentials'ın güncel olduğunu kontrol et</li>
+                                <li>• Learner Lab session'ın aktif olduğundan emin ol</li>
+                            </ul>
+                        </div>
+
+                        <div class="card-gradient rounded-xl p-6 border border-yellow-500/30">
+                            <h3 class="text-lg font-semibold mb-3 text-yellow-400">
+                                <i class="fas fa-coins mr-2"></i> Bütçe yetersiz
+                            </h3>
+                            <p class="text-gray-300 mb-3">Tasarruf yöntemleri:</p>
+                            <ul class="text-sm text-gray-400 space-y-1">
+                                <li>• Daha küçük veri kullan (5GB)</li>
+                                <li>• Daha az node kullan (2 node)</li>
+                                <li>• m4.large instance kullan</li>
+                                <li>• Cluster'ı hemen terminate et</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Links Section -->
+            <section id="links" class="section">
+                <div class="max-w-5xl mx-auto">
+                    <h2 class="text-3xl font-bold mb-6 flex items-center gap-3">
+                        <i class="fas fa-link text-blue-400"></i> Faydalı Linkler
+                    </h2>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <a href="https://awsacademy.instructure.com" target="_blank" class="card-gradient rounded-xl p-5 border border-gray-700 hover:border-blue-500 transition">
+                            <div class="flex items-center gap-3">
+                                <i class="fas fa-graduation-cap text-2xl text-orange-400"></i>
+                                <div>
+                                    <h3 class="font-semibold">AWS Academy</h3>
+                                    <p class="text-sm text-gray-400">Learner Lab'a giriş</p>
+                                </div>
+                            </div>
+                        </a>
+
+                        <a href="https://docs.aws.amazon.com/emr/" target="_blank" class="card-gradient rounded-xl p-5 border border-gray-700 hover:border-blue-500 transition">
+                            <div class="flex items-center gap-3">
+                                <i class="fas fa-book text-2xl text-blue-400"></i>
+                                <div>
+                                    <h3 class="font-semibold">AWS EMR Documentation</h3>
+                                    <p class="text-sm text-gray-400">Resmi dokümantasyon</p>
+                                </div>
+                            </div>
+                        </a>
+
+                        <a href="https://spark.apache.org/docs/latest/" target="_blank" class="card-gradient rounded-xl p-5 border border-gray-700 hover:border-blue-500 transition">
+                            <div class="flex items-center gap-3">
+                                <i class="fas fa-fire text-2xl text-orange-500"></i>
+                                <div>
+                                    <h3 class="font-semibold">Apache Spark Docs</h3>
+                                    <p class="text-sm text-gray-400">Spark dokümantasyonu</p>
+                                </div>
+                            </div>
+                        </a>
+
+                        <a href="https://www.putty.org/" target="_blank" class="card-gradient rounded-xl p-5 border border-gray-700 hover:border-blue-500 transition">
+                            <div class="flex items-center gap-3">
+                                <i class="fas fa-terminal text-2xl text-green-400"></i>
+                                <div>
+                                    <h3 class="font-semibold">PuTTY Download</h3>
+                                    <p class="text-sm text-gray-400">SSH client for Windows</p>
+                                </div>
+                            </div>
+                        </a>
+
+                        <a href="https://aws.amazon.com/cli/" target="_blank" class="card-gradient rounded-xl p-5 border border-gray-700 hover:border-blue-500 transition">
+                            <div class="flex items-center gap-3">
+                                <i class="fas fa-terminal text-2xl text-yellow-400"></i>
+                                <div>
+                                    <h3 class="font-semibold">AWS CLI Download</h3>
+                                    <p class="text-sm text-gray-400">Command Line Interface</p>
+                                </div>
+                            </div>
+                        </a>
+
+                        <a href="https://github.com/adamchainz/ec2-metadata" target="_blank" class="card-gradient rounded-xl p-5 border border-gray-700 hover:border-blue-500 transition">
+                            <div class="flex items-center gap-3">
+                                <i class="fab fa-github text-2xl text-gray-400"></i>
+                                <div>
+                                    <h3 class="font-semibold">EC2 Metadata Library</h3>
+                                    <p class="text-sm text-gray-400">Python library for EC2</p>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- Footer -->
+    <footer class="ml-64 py-6 text-center text-gray-500 text-sm border-t border-gray-700">
+        <p>CSE423 Cloud Computing Project - Adnan Menderes University - 2025</p>
+    </footer>
+
+    <script>
+        // Section navigation
+        function showSection(sectionId) {
+            // Hide all sections
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            // Show selected section
+            document.getElementById(sectionId).classList.add('active');
+            
+            // Update nav active state
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('nav-active');
+                if (link.dataset.section === sectionId) {
+                    link.classList.add('nav-active');
+                }
+            });
+            
+            // Scroll to top
+            window.scrollTo(0, 0);
+        }
+
+        // Copy code function
+        function copyCode(element) {
+            let text;
+            if (element.tagName === 'BUTTON') {
+                text = element.parentElement.querySelector('pre').innerText;
+            } else {
+                text = element.querySelector('pre').innerText;
+            }
+            
+            navigator.clipboard.writeText(text).then(() => {
+                // Show feedback
+                const btn = element.tagName === 'BUTTON' ? element : element.querySelector('.copy-btn');
+                const originalText = btn.innerHTML;
+                btn.innerHTML = '<i class="fas fa-check"></i> Kopyalandı!';
+                btn.classList.add('bg-green-500');
+                setTimeout(() => {
+                    btn.innerHTML = originalText;
+                    btn.classList.remove('bg-green-500');
+                }, 2000);
+            });
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            showSection('overview');
+        });
+    </script>
+</body>
+</html>
